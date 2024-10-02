@@ -14,6 +14,16 @@ module.exports.allAccount = async function (req,res) {
 
 module.exports.Register = async function (req,res) {
     try {
+        const existEmail = await Account.findOne({
+            email: req.body.email,
+            deleted: false
+        })
+
+        if(existEmail){
+            res.status(400).json("Email exist")
+            return
+        }
+
         const fullName = req.body.fullName
         const email = req.body.email
         const password = md5(req.body.password)
