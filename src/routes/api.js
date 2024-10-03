@@ -9,6 +9,7 @@ const delay = require("../middleware/delay");
 const auth = require("../middleware/auth");
 const accountRouter = require("../routes/account")
 const storeRouter = require("./store")
+const treatmentRouter = require("./treatment")
 const routerAPI = express.Router();
 //routerAPI.all("*", auth);
 
@@ -22,5 +23,6 @@ routerAPI.get("/user",auth, getUser);
 routerAPI.get("/account",auth, getAccount);
 routerAPI.use("/admin",accountRouter)
 routerAPI.use("/stores",storeRouter)
+routerAPI.use("/treatments",treatmentRouter)
 
 module.exports = routerAPI; //export default
