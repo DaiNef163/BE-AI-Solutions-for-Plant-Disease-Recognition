@@ -16,6 +16,10 @@ const Product = new Schema({
     slug: "title",
     unique: true
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
   deleted: {
     type : Boolean,
     default : false
