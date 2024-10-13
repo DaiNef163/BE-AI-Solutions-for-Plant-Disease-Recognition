@@ -13,7 +13,10 @@ const Accounts = new Schema({
     type: String,
     default : genaration.generateRandomString(20)
   },
-  role: String,
+  role: {
+    type : String,
+    default : "Staff"
+  },
   avatar: String,
   deleted: {
     type : Boolean,

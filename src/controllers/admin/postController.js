@@ -2,14 +2,21 @@ const Posts = require("../../models/post")
 const Accounts = require("../../models/account")
 
 module.exports.Create = async function (req,res) {
-    try {
-        const userId = req.user.id
-        const newPost ={...req.body,user:userId}
-        const post = new Posts(newPost)
-        await post.save()
-        res.status(200).json(post)
-    } catch (error) {
-        res.status(400).json("Create post fail")
+    if(req.permission.permission.includes("post_create")){
+        try {
+            const userId = req.user.id
+            if (req.file) {
+                req.body.image = `/uploads/${req.file.filename}`
+            }
+            const newPost ={...req.body,user:userId}
+            const post = new Posts(newPost)
+            await post.save()
+            res.status(200).json(post)
+        } catch (error) {
+            res.status(400).json("Create post fail")
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
 }
 
@@ -22,40 +29,63 @@ module.exports.allPost = async function (req,res) {
     }
 }
 
-module.exports.Update = async function (req,res) {
+module.exports.detailPost = async function (req,res) {
     try {
-        const postId = req.params.id
-        const post = await Posts.findOne({_id:postId})
+        const detailPost = await Posts.findById(req.params.id)
 
-        if(post.user.toString() !== req.user.id){
-            res.status(400).json({message:"User not authorized"})
-            return
-        }
-
-        await post.updateOne(req.body)
-
-        res.status(200).json("update success")
+        res.status(200).json(detailPost)
     } catch (error) {
-        res.status(200).json("update fail")   
+        res.status(400).json("Không tìm thấy post")
+    }
+}
+
+module.exports.Update = async function (req,res) {
+    if (req.permission.permission.includes("post_edit")) {
+        try {
+            const postId = req.params.id
+            const post = await Posts.findOne({_id:postId})
+    
+            if(post.user.toString() !== req.user.id){
+                res.status(400).json({message:"User not authorized"})
+                return
+            }
+            
+            if (req.file) {
+                req.body.image = `/uploads/${req.file.filename}`
+            }
+
+            await post.updateOne(req.body)
+    
+            res.status(200).json("update success")
+        } catch (error) {
+            res.status(200).json("update fail")   
+        }
+    } else {
+        res.status(400).json("Bạn không có quyền này")
     }
 }
 
 module.exports.Delete = async function (req,res) {
-    try {
-        const postId = req.params.id
-        const post = await Posts.findOne({_id:postId})
-
-        if(post.user.toString() !== req.user.id){
-            res.status(400).json({message:"User not authorized"})
-            return
+    if(req.permission.permission.includes("post_delete")){
+        try {
+            const postId = req.params.id
+            const post = await Posts.findOne({_id:postId})
+    
+            if(post.user.toString() !== req.user.id){
+                res.status(400).json({message:"User not authorized"})
+                return
+            }
+    
+            await post.deleteOne()
+    
+            res.status(200).json("Delete success")
+        } catch (error) {
+            res.status(200).json("Delete fail")   
         }
-
-        await post.deleteOne()
-
-        res.status(200).json("Delete success")
-    } catch (error) {
-        res.status(200).json("Delete fail")   
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
+    
 }
 
 module.exports.createComment = async function (req,res) {

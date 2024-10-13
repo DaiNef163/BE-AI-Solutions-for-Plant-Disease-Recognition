@@ -8,6 +8,7 @@ const Posts = new Schema({
   },
   title: String,
   text: String,
+  image: String,
   name: String,
   comments: [{
     user: {

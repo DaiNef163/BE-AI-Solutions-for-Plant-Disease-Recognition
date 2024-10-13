@@ -12,7 +12,9 @@ const storeRouter = require("./store")
 const treatmentRouter = require("./treatment")
 const postRouter = require("./post")
 const productRouter = require("./product")
+const roleRouter = require("./role")
 const routerAPI = express.Router();
+const authAdmin = require("../middleware/authAdmin")
 //routerAPI.all("*", auth);
 
 routerAPI.get("/", (req, res) => {
@@ -23,9 +25,10 @@ routerAPI.post("/register", auth,createUser);
 routerAPI.post("/login",auth, handleLogin);
 routerAPI.get("/user",auth, getUser);
 routerAPI.get("/account",auth, getAccount);
-routerAPI.use("/admin",accountRouter)
-routerAPI.use("/stores",storeRouter)
-routerAPI.use("/treatments",treatmentRouter)
-routerAPI.use("/posts",postRouter)
-routerAPI.use("/product",productRouter)
+routerAPI.use("/admin",authAdmin.requireAuth,accountRouter)
+routerAPI.use("/stores",authAdmin.requireAuth,storeRouter)
+routerAPI.use("/treatments",authAdmin.requireAuth,treatmentRouter)
+routerAPI.use("/posts",authAdmin.requireAuth,postRouter)
+routerAPI.use("/product",authAdmin.requireAuth,productRouter)
+routerAPI.use("/role",authAdmin.requireAuth,roleRouter)
 module.exports = routerAPI; //export default

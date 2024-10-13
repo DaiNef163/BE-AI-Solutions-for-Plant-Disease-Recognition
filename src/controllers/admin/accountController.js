@@ -15,48 +15,77 @@ module.exports.allAccount = async function (req,res) {
     }
 }
 
-module.exports.Register = async function (req,res) {
-    try {
-        const existEmail = await Account.findOne({
-            email: req.body.email,
-            deleted: false
-        })
-
-        if(existEmail){
-            res.status(400).json("Email exist")
-            return
+module.exports.createAccount = async function (req,res) {
+    if(req.permission.permission.includes("account_create")){
+        try {
+            const existEmail = await Account.findOne({
+                email: req.body.email,
+                deleted: false
+            })
+    
+            if(existEmail){
+                res.status(400).json("Email exist")
+                return
+            }
+    
+            const fullName = req.body.fullName
+            const email = req.body.email
+            const password = md5(req.body.password)
+    
+            const account = new Account({fullName:fullName,email:email,password:password})
+            await account.save()
+            res.status(200).json(account)
+        } catch (error) {
+            res.json(error)
         }
-
-        const fullName = req.body.fullName
-        const email = req.body.email
-        const password = md5(req.body.password)
-
-        const account = new Account({fullName:fullName,email:email,password:password})
-        await account.save()
-        res.status(200).json(account)
-    } catch (error) {
-        res.json(error)
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
+    
 }
 
 module.exports.Detail= async function (req,res) {
-    try {
-        const accountDetail = await Account.findById(req.params.id).select("-password")
-
-        res.status(200).json(accountDetail)
-    } catch (error) {
-        res.json({message:"Id user not valid"})
+    if(req.permission.permission.includes("account_view")){
+        try {
+            const accountDetail = await Account.findById(req.params.id).select("-password")
+    
+            res.status(200).json(accountDetail)
+        } catch (error) {
+            res.json({message:"Id user not valid"})
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
+    
 }
 
 module.exports.Update = async function (req,res) {
-    try {
-        const updateUser = await Account.updateOne({_id:req.params.id},{...req.body})
-
-        res.status(200).json({message: "Update success"})
-    } catch (error) {
-        res.json({message:"Update Fail"})
+    if(req.permission.permission.includes("account_edit")){
+        try {
+            const updateUser = await Account.updateOne({_id:req.params.id},{...req.body})
+    
+            res.status(200).json({message: "Update success"})
+        } catch (error) {
+            res.json({message:"Update Fail"})
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
+    
+}
+
+module.exports.deleteAccount = async function (req,res) {
+    if(req.permission.permission.includes("account_delete")){
+        try {
+            await Account.findByIdAndDelete(req.params.id)
+            res.status(200).json("Xóa thành công")
+        } catch (error) {
+            res.status(400).json("Xóa thất bại")
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
+    }
+   
 }
 
 module.exports.Login = async function (req,res) {
