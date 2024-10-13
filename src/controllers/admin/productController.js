@@ -14,8 +14,8 @@ module.exports.createProduct = async function (req,res) {
                 req.body.stock = parseInt(req.body.stock)
             }
     
-            if (req.file) {
-                req.body.thumbnail = `/uploads/${req.file.filename}`
+            if (req.files && req.files.length > 0) {
+                req.body.thumbnails = req.files.map(file => `/uploads/${file.filename}`);
             }
     
             const product = new Products(req.body)
@@ -76,8 +76,8 @@ module.exports.updateProduct = async function (req,res) {
                 req.body.stock = parseInt(req.body.stock)
             }
     
-            if (req.file) {
-                req.body.thumbnail = `/uploads/${req.file.filename}`
+            if (req.files && req.files.length > 0) {
+                req.body.thumbnails = req.files.map(file => `/uploads/${file.filename}`);
             }
     
             await product.updateOne(req.body)

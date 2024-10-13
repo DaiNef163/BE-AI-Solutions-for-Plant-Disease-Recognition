@@ -25,7 +25,7 @@ routerAPI.post("/register", auth,createUser);
 routerAPI.post("/login",auth, handleLogin);
 routerAPI.get("/user",auth, getUser);
 routerAPI.get("/account",auth, getAccount);
-routerAPI.use("/admin",authAdmin.requireAuth,accountRouter)
+routerAPI.use("/admin",accountRouter)
 routerAPI.use("/stores",authAdmin.requireAuth,storeRouter)
 routerAPI.use("/treatments",authAdmin.requireAuth,treatmentRouter)
 routerAPI.use("/posts",authAdmin.requireAuth,postRouter)
