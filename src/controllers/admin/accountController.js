@@ -112,12 +112,13 @@ module.exports.Login = async function (req,res) {
 
 module.exports.forgotPassword = async function (req,res) {
     if(!req.body.email){
+        const email = req.body.email
         res.status(400).json("Yêu cầu nhập email")
         return
     }
 
-    const email = req.body.email
-
+    console.log("check email forgot" , email);
+    
     const account = await Account.findOne({email:email})
 
     if(!account){
