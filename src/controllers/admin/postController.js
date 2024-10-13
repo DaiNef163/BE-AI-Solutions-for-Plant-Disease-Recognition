@@ -5,8 +5,8 @@ module.exports.Create = async function (req,res) {
     if(req.permission.permission.includes("post_create")){
         try {
             const userId = req.user.id
-            if (req.file) {
-                req.body.image = `/uploads/${req.file.filename}`
+            if (req.files && req.files.length > 0) {
+                req.body.images = req.files.map(file => `/uploads/${file.filename}`);
             }
             const newPost ={...req.body,user:userId}
             const post = new Posts(newPost)
@@ -50,8 +50,8 @@ module.exports.Update = async function (req,res) {
                 return
             }
             
-            if (req.file) {
-                req.body.image = `/uploads/${req.file.filename}`
+            if (req.files && req.files.length > 0) {
+                req.body.images = req.files.map(file => `/uploads/${file.filename}`);
             }
 
             await post.updateOne(req.body)
