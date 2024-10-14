@@ -45,7 +45,7 @@ const loginService = async (email, password) => {
           email: user.email,
           name: user.name,
         };
-        const access_token = jwt.sign(payload, process.env.JWT_SERECT, {
+        const access_token = await jwt.sign(payload, process.env.JWT_SERECT, {
           expiresIn: process.env.JWT_EXPIRE,
         });
         return {
