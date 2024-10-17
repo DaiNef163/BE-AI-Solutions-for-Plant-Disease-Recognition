@@ -28,7 +28,7 @@ routerAPI.get("/account",auth, getAccount);
 routerAPI.use("/admin",accountRouter)
 routerAPI.use("/stores",authAdmin.requireAuth,storeRouter)
 routerAPI.use("/treatments",authAdmin.requireAuth,treatmentRouter)
-routerAPI.use("/posts",authAdmin.requireAuth,postRouter)
+routerAPI.use("/posts",postRouter)
 routerAPI.use("/product",authAdmin.requireAuth,productRouter)
 routerAPI.use("/role",authAdmin.requireAuth,roleRouter)
 module.exports = routerAPI; //export default

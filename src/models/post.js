@@ -25,6 +25,10 @@ const Posts = new Schema({
         default: Date.now
     }
   }],
+  accept:{
+    type : Boolean,
+    default: false
+  },
   date:{
     type: Date,
     default: Date.now
