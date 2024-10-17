@@ -1,7 +1,7 @@
-const express = require('express')
-const router = express.Router()
-const accountController = require("../controllers/admin/accountController")
-const auth = require("../middleware/authAdmin")
+const express = require("express");
+const router = express.Router();
+const accountController = require("../controllers/admin/accountController");
+const auth = require("../middleware/authAdmin");
 
 router.get('/',accountController.allAccount)
 router.post('/create',auth.requireAuth,accountController.createAccount)
