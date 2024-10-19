@@ -9,7 +9,6 @@ const Posts = new Schema({
   title: String,
   text: String,
   images: [],
-  name: String,
   comments: [{
     user: {
         type: mongoose.Schema.Types.ObjectId

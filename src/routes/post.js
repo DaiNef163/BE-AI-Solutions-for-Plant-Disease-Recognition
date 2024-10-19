@@ -14,5 +14,6 @@ router.get("/detail/:id",postController.detailPost)
 router.post("/comments/:id",auth.requireAuth,postController.createComment)
 router.delete("/uncomments/:id/:comment_id",auth.requireAuth,postController.deleteComment)
 router.patch("/accept/:id",auth.requireAuth,postController.acceptPost)
-
+router.get("/postadmin",auth.requireAuth,postController.postAdmin)
+router.delete("/unaccept/:id",auth.requireAuth,postController.unAccept)
 module.exports = router

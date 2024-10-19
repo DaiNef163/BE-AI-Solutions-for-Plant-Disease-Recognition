@@ -8,7 +8,7 @@ const Product = new Schema({
   title:  String ,
   description: String,
   price:  Number,
-  discountPercentage:  Number,
+  discount:  Number,
   stock:  Number,
   thumbnails: [],
   slug: { 
