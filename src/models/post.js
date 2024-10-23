@@ -9,7 +9,6 @@ const Posts = new Schema({
   title: String,
   text: String,
   images: [],
-  name: String,
   comments: [{
     user: {
         type: mongoose.Schema.Types.ObjectId
@@ -25,6 +24,10 @@ const Posts = new Schema({
         default: Date.now
     }
   }],
+  accept:{
+    type : Boolean,
+    default: false
+  },
   date:{
     type: Date,
     default: Date.now

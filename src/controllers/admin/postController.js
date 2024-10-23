@@ -22,7 +22,7 @@ module.exports.Create = async function (req,res) {
 
 module.exports.allPost = async function (req,res) {
     try {
-        const allPost = await Posts.find().sort({date: -1})
+        const allPost = await Posts.find({accept: true}).sort({date: -1})
         res.status(200).json(allPost)
     } catch (error) {
         res.status(400).json("Fail")
@@ -85,7 +85,6 @@ module.exports.Delete = async function (req,res) {
     }else{
         res.status(400).json("Bạn không có quyền này")
     }
-    
 }
 
 module.exports.createComment = async function (req,res) {
@@ -143,5 +142,48 @@ module.exports.deleteComment = async function (req,res) {
 
     } catch (error) {
         res.status(400).json("Delete comment fail")
+    }
+}
+
+module.exports.acceptPost = async function (req,res) {
+    if(req.permission.permission.includes("post_accept")){
+        try {
+            const postId = req.params.id
+            await Posts.updateOne({_id:postId},{accept:true})
+    
+            res.status(200).json("Bài post được chấp nhận")
+        } catch (error) {
+            res.status(200).json("Fail")   
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
+    }
+}
+
+module.exports.postAdmin = async function (req,res) {
+    if(req.permission.permission.includes("post_admin")){
+        try {
+            const posts = await Posts.find({accept:false}).sort({date:-1})
+            res.status(200).json(posts)
+        } catch (error) {
+            res.json("Lỗi !!")
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
+    }
+}
+
+module.exports.unAccept = async function (req,res) {
+    if(req.permission.permission.includes("post_unaccept")){
+        try {
+            const postId = req.params.id
+            await Posts.deleteOne({_id:postId})
+    
+            res.status(200).json("Không chấp nhận bài post")
+        } catch (error) {
+            res.status(400).json("Lỗi")
+        }
+    }else{
+        res.status(400).json("Bạn không có quyền này")
     }
 }

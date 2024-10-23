@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express"); //commonjs
 const configViewEngine = require("./config/viewEngine");
 const apiRoutes = require("./routes/user");
+const apiAdmin = require("./routes/api")
 const connection = require("./config/database");
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
@@ -29,6 +30,7 @@ configViewEngine(app);
 
 
 app.use("/v1/api/", apiRoutes);
+app.use("/router", apiAdmin);
 // app.use('',routerAPI)
 
 (async () => {

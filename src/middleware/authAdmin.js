@@ -4,7 +4,7 @@ module.exports.requireAuth= async (req,res,next) =>{
     if(req.headers.authorization){
         const token = req.headers.authorization.split(" ")[1]
         const user = await Account.findOne({tokenUser:token,deleted:false}).select("-password")
-        const permission = await Role.findOne({title: user.role}).select("permission")
+        const permission = await Role.findOne({title: user.role}).select("permission -_id")
 
         if(!user){
             res.json({
