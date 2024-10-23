@@ -4,8 +4,8 @@ const configViewEngine = require("./config/viewEngine");
 const apiRoutes = require("./routes/user");
 const connection = require("./config/database");
 const cookieParser = require('cookie-parser');
-const { getHomepage } = require("./controllers/homeController");
 const cors = require("cors");
+const fileUpload = require('express-fileupload')
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -19,14 +19,15 @@ app.use(
 );
 app.use(cookieParser());
 
-//config req.body
 app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); // for form data
+app.use(express.urlencoded({ extended: true })); 
 
-//config template engine
+app.use(fileUpload())
+
+
 configViewEngine(app);
 
-//khai báo route
+
 app.use("/v1/api/", apiRoutes);
 // app.use('',routerAPI)
 
@@ -35,8 +36,8 @@ app.use("/v1/api/", apiRoutes);
     //using mongoose
     await connection();
 
-    app.listen(port, () => {
-      console.log(`Backend Nodejs App listening on port ${port}`);
+    app.listen(port, () => {   
+      console.log(`http://localhost:${port}`);
     });
   } catch (error) {
     console.log(">>> Error connect to DB: ", error);

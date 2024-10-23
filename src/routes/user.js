@@ -7,6 +7,8 @@ const {
   userForgetPassword,
   verifyOTP,
   resetPassword,
+  uploadSingleImage,
+  uploadMultipleImage,
 } = require("../controllers/userController");
 const delay = require("../middleware/delay");
 const auth = require("../middleware/auth");
@@ -23,8 +25,10 @@ routerAPI.post("/login", auth, handleLogin);
 routerAPI.get("/user", auth, getUser);
 routerAPI.get("/account", auth, getAccount);
 routerAPI.post("/userForgetPassword", userForgetPassword);
-routerAPI.post("/verifyotp",verifyOTP);
-routerAPI.post("/resetPassword",resetPassword);
+routerAPI.post("/verifyotp", verifyOTP);
+routerAPI.post("/resetPassword", resetPassword);
+routerAPI.post("/uploadsinglefile", uploadSingleImage);
+routerAPI.post("/uploadmultiplefile", uploadMultipleImage);
 
 // routerAPI.use("/admin", accountRouter);
 // routerAPI.use("/stores", authAdmin.requireAuth, storeRouter);
