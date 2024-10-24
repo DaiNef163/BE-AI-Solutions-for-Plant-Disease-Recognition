@@ -1,25 +1,36 @@
 require("dotenv").config();
 const express = require("express"); //commonjs
 const configViewEngine = require("./config/viewEngine");
-const apiRoutes = require("./routes/api");
+const apiRoutes = require("./routes/user");
+const apiAdmin = require("./routes/api")
 const connection = require("./config/database");
-const { getHomepage } = require("./controllers/homeController");
+const cookieParser = require('cookie-parser');
 const cors = require("cors");
+const fileUpload = require('express-fileupload')
 
 const app = express();
 const port = process.env.PORT || 8888;
 
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true, 
+  })
+);
+app.use(cookieParser());
 
-//config req.body
-app.use(express.json()); // for json
-app.use(express.urlencoded({ extended: true })); // for form data
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 
-//config template engine
+app.use(fileUpload())
+
+
 configViewEngine(app);
 
-//khai báo route
-app.use("/v1/api/", apiRoutes);
+
+app.use("/", apiRoutes);
+app.use("/router", apiAdmin);
 // app.use('',routerAPI)
 
 (async () => {
@@ -27,8 +38,8 @@ app.use("/v1/api/", apiRoutes);
     //using mongoose
     await connection();
 
-    app.listen(port, () => {
-      console.log(`Backend Nodejs App listening on port ${port}`);
+    app.listen(port, () => {   
+      console.log(`http://localhost:${port}`);
     });
   } catch (error) {
     console.log(">>> Error connect to DB: ", error);

@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   const white_lists = ["/", "/register", "/login"];
 
   // Bypass authentication for whitelisted routes
-  if (white_lists.find((item) => "/v1/api" + item === req.originalUrl)) {
+  if (white_lists.find((item) => "" + item === req.originalUrl)) {
     return next();
   }
 
