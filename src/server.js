@@ -29,7 +29,7 @@ app.use(fileUpload())
 configViewEngine(app);
 
 
-app.use("/v1/api/", apiRoutes);
+app.use("/", apiRoutes);
 app.use("/router", apiAdmin);
 // app.use('',routerAPI)
 
