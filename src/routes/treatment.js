@@ -7,5 +7,5 @@ router.get('/',treatmentController.allTreatment)
 router.post('/create',auth.requireAuth,treatmentController.Create)
 router.get('/detail/:id',treatmentController.Detail)
 router.patch('/update/:id',auth.requireAuth,treatmentController.Update)
-router.delete('/delete/:id',treatmentController.Delete)
+router.delete('/delete/:id',auth.requireAuth,treatmentController.Delete)
 module.exports = router
