@@ -1,5 +1,4 @@
 const { json } = require("express");
-const Account = require("../../models/account");
 const ForgotPassword = require("../../models/forgot-password");
 const md5 = require("md5");
 const helperPassword = require("../../helper/genaration");
@@ -7,7 +6,7 @@ const sendMail = require("../../helper/sendMail");
 
 module.exports.allAccount = async function (req, res) {
   try {
-    const allAccount = await Account.find().select("-password");
+    const allAccount = await Accounts.find().select("-password");
 
     res.status(200).json(allAccount);
   } catch (error) {
@@ -18,7 +17,7 @@ module.exports.allAccount = async function (req, res) {
 module.exports.createAccount = async function (req, res) {
   if (req.permission.permission.includes("account_create")) {
     try {
-      const existEmail = await Account.findOne({
+      const existEmail = await Accounts.findOne({
         email: req.body.email,
         deleted: false,
       });
@@ -50,7 +49,7 @@ module.exports.createAccount = async function (req, res) {
 module.exports.Detail = async function (req, res) {
   if (req.permission.permission.includes("account_view")) {
     try {
-      const accountDetail = await Account.findById(req.params.id).select(
+      const accountDetail = await Accounts.findById(req.params.id).select(
         "-password"
       );
 
@@ -66,7 +65,7 @@ module.exports.Detail = async function (req, res) {
 module.exports.Update = async function (req, res) {
   if (req.permission.permission.includes("account_edit")) {
     try {
-      const updateUser = await Account.updateOne(
+      const updateUser = await Accounts.updateOne(
         { _id: req.params.id },
         { ...req.body }
       );
@@ -83,7 +82,7 @@ module.exports.Update = async function (req, res) {
 module.exports.deleteAccount = async function (req, res) {
   if (req.permission.permission.includes("account_delete")) {
     try {
-      await Account.findByIdAndDelete(req.params.id);
+      await Accounts.findByIdAndDelete(req.params.id);
       res.status(200).json("Xóa thành công");
     } catch (error) {
       res.status(400).json("Xóa thất bại");
@@ -97,7 +96,7 @@ module.exports.Login = async function (req, res) {
   const email = req.body.email;
   const password = req.body.password;
 
-  const account = await Account.findOne({
+  const account = await Accounts.findOne({
     email: email,
   });
 
@@ -122,7 +121,7 @@ module.exports.forgotPassword = async function (req, res) {
   }
 
   const email = req.body.email;
-  const account = await Account.findOne({ email: email });
+  const account = await Accounts.findOne({ email: email });
 
   if (!account) {
     res.status(400).json("Email không đúng");
@@ -161,7 +160,7 @@ module.exports.otpPost = async function (req, res) {
     return;
   }
 
-  const user = await Account.findOne({ email: email, deleted: false });
+  const user = await Accounts.findOne({ email: email, deleted: false });
 
   res.cookie("tokenUser", user.tokenUser);
   res.status(200).json("OTP hợp lệ");
@@ -175,7 +174,7 @@ module.exports.resetPassword = async function (req, res) {
     return res.status(401).json("Unauthorized: No token found");
   }
 
-  await Account.updateOne({ tokenUser: token }, { password: md5(password) });
+  await Accounts.updateOne({ tokenUser: token }, { password: md5(password) });
   res.status(200).json("Reset password thành công");
 };
 

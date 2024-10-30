@@ -1,12 +1,13 @@
 require("dotenv").config();
 const express = require("express"); //commonjs
 const configViewEngine = require("./config/viewEngine");
-const apiRoutes = require("./routes/user");
-const apiAdmin = require("./routes/api")
+// const apiRoutes = require("./routes/user");
+const apiAdmin = require("./routes/api.routes");
 const connection = require("./config/database");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const fileUpload = require('express-fileupload')
+const fileUpload = require("express-fileupload");
+const routerUser = require("./routes/user.routes");
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -15,22 +16,21 @@ const port = process.env.PORT || 8888;
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true, 
+    credentials: true,
   })
 );
 app.use(cookieParser());
 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(fileUpload())
-
+app.use(fileUpload());
 
 configViewEngine(app);
 
+app.use("/", routerUser);
+app.use("/", apiAdmin);
 
-app.use("/", apiRoutes);
-app.use("/router", apiAdmin);
 // app.use('',routerAPI)
 
 (async () => {
@@ -38,7 +38,7 @@ app.use("/router", apiAdmin);
     //using mongoose
     await connection();
 
-    app.listen(port, () => {   
+    app.listen(port, () => {
       console.log(`http://localhost:${port}`);
     });
   } catch (error) {

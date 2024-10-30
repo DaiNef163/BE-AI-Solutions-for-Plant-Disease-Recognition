@@ -1,19 +1,35 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Roles = new Schema({
-  title:  String ,
-  description: String,
-  permission:{
-    type : Array,
-    default: []
+const RoleSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    permission: {
+      type: [String],
+      default: [],
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
-  deleted: {
-    type : Boolean,
-    default : false
-  },
-},{
-  timestamps :true
-})
+  {
+    timestamps: true,
+    collection: "roles",
+  }
+);
 
-module.exports=mongoose.model('Role', Roles, 'roles');
+module.exports = mongoose.model("Role", RoleSchema);

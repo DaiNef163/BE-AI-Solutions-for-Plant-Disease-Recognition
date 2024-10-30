@@ -1,5 +1,5 @@
 const SendmailTransport = require("nodemailer/lib/sendmail-transport");
-const User = require("../models/user");
+const Accounts = require("../models/Account");
 const {
   createUserService,
   loginService,
@@ -9,12 +9,15 @@ const nodeMailer = require("nodemailer");
 const { text } = require("express");
 const forgotPassword = require("../models/forgot-password");
 const bcrypt = require("bcrypt");
-const { uploadSingleFile, uploadMultipleFile } = require("../services/fileServiceUpload");
+const {
+  uploadSingleFile,
+  uploadMultipleFile,
+} = require("../services/fileServiceUpload");
 
 const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  const data = await createUserService(name, email, password);
-  return res.status(200).json(data);
+  const { name, email, password, phone, gender } = req.body;
+  const data = await createUserService(name, email, password, phone, gender);
+  return res.status(201).json(data);
 };
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -38,7 +41,7 @@ const userForgetPassword = async (req, res) => {
   }
 
   const email = req.body.email;
-  const account = await User.findOne({ email: email });
+  const account = await Accounts.findOne({ email: email });
 
   if (!account) {
     res.status(400).json("Email không đúng");
@@ -118,7 +121,7 @@ const resetPassword = async (req, res) => {
     return res.status(400).json("Yêu cầu nhập email và mật khẩu mới");
   }
 
-  const user = await User.findOne({ email: email });
+  const user = await Accounts.findOne({ email: email });
 
   if (!user) {
     return res.status(400).json("Người dùng không tồn tại");
@@ -141,17 +144,17 @@ const uploadSingleImage = async (req, res) => {
   }
   uploadSingleFile(req.files.image);
   console.log("req.file", req.files);
-  console.log("check array",Array.isArray(req.files.image));
+  console.log("check array", Array.isArray(req.files.image));
   res.send("ok file");
 };
 
 const uploadMultipleImage = async (req, res) => {
   console.log("req.file", req.files);
 
-  console.log("check array",Array.isArray(req.files.image));
+  console.log("check array", Array.isArray(req.files.image));
   if (!req.files || Object.keys(req.files).length === 0) {
     res.status(400).send("No files were uploaded.");
-    return ;
+    return;
   }
   uploadMultipleFile(req.files.image);
   res.send("ok file");
@@ -164,5 +167,6 @@ module.exports = {
   userForgetPassword,
   verifyOTP,
   resetPassword,
-  uploadSingleImage,uploadMultipleImage
+  uploadSingleImage,
+  uploadMultipleImage,
 };
