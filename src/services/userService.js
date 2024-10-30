@@ -1,18 +1,24 @@
-const User = require("../models/user");
+const User = require("../models/Account");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const createUserService = async (name, email, password) => {
+const createUserService = async (name, email, password, phone, gender) => {
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error("Email đã tồn tại. Vui lòng chọn email khác.");
+    }
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
     let result = await User.create({
       name: name,
       email: email,
       password: hashPassword,
-      role: "HoaiNam",
+      phone: phone,
+      gender: gender,
+      role: "customer",
     });
     return result;
   } catch (error) {
