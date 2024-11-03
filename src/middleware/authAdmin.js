@@ -1,4 +1,4 @@
-const Account = require("../models/account_remove");
+const Account = require("../models/account")
 const Role = require("../models/role");
 module.exports.requireAuth = async (req, res, next) => {
   if (req.headers.authorization) {
@@ -22,6 +22,7 @@ module.exports.requireAuth = async (req, res, next) => {
 
     req.user = user;
     req.permission = permission;
+    console.log(req.permission)
     next();
   } else {
     res.json({

@@ -12,11 +12,11 @@ const routerUser = require("./routes/user.routes");
 const app = express();
 const port = process.env.PORT || 8888;
 
-// app.use(cors());
+//app.use(cors());
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,
+    credentials: true,  
   })
 );
 app.use(cookieParser());

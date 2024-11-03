@@ -1,5 +1,5 @@
 const SendmailTransport = require("nodemailer/lib/sendmail-transport");
-const Accounts = require("../models/Account");
+const Accounts = require("../models/account");
 const {
   createUserService,
   loginService,
