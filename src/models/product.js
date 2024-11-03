@@ -6,9 +6,9 @@ const Schema = mongoose.Schema;
 
 const Product = new Schema(
   {
-    productName: { type: String, default: "Chưa cập nhật tên" },
+    productName: { type: String, require: true },
     price: { type: Number, required: true },
-    description: { type: String },
+    description: { type: String, require: true },
     discount: { type: Number, default: 0 },
     image: { type: Array },
     slug: {
