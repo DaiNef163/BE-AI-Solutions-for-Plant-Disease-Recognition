@@ -1,5 +1,5 @@
 const Posts = require("../../models/postNews");
-const Accounts = require("../../models/Account");
+const Accounts = require("../../models/account");
 
 module.exports.Create = async function (req, res) {
   if (req.permission.permission.includes("post_create")) {

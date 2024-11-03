@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const genaration = require("../helper/genaration.js");
+const genaration = require('../helper/genaration.js');
 
-const userSchema = new Schema(
-  {
+const Accounts = new Schema( {
     name: {
       type: String,
       required: true,
@@ -56,4 +55,4 @@ const userSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Accounts", userSchema);
+module.exports=mongoose.model('Accounts', Accounts, 'accounts'); 
