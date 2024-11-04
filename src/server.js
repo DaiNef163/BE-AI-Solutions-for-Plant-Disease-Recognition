@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const routerUser = require("./routes/Account.routes");
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -24,14 +25,22 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(fileUpload());
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 
 configViewEngine(app);
 
-app.use("/", routerUser);
-app.use("/", apiAdmin);
-
 // app.use('',routerAPI)
+
+cloudinary.config({
+  secure: true,
+});
+
+// Log the configuration
+console.log("cloudinary.config()", cloudinary.config());
 
 (async () => {
   try {
@@ -45,3 +54,6 @@ app.use("/", apiAdmin);
     console.log(">>> Error connect to DB: ", error);
   }
 })();
+
+app.use("/", routerUser);
+app.use("/", apiAdmin);
