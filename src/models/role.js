@@ -6,30 +6,20 @@ const RoleSchema = new Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
-      default: "",
+      unique: true,
     },
     permission: {
-      type: [String],
+      type: [String], // danh sách quyền, ví dụ: ["products_create", "products_delete"]
       default: [],
     },
     deleted: {
       type: Boolean,
       default: false,
     },
-    deletedAt: {
-      type: Date,
-      default: null,
-    },
   },
   {
     timestamps: true,
-    collection: "roles",
   }
 );
 
-module.exports = mongoose.model("Role", RoleSchema,"roles");
+module.exports = mongoose.model("Role", RoleSchema);

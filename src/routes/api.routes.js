@@ -1,13 +1,13 @@
 const express = require("express");
 const {
-  createUser,
+  createAccount,
   handleLogin,
   getUser,
   getAccount,
 } = require("../controllers/userController");
 const delay = require("../middleware/delay");
 const auth = require("../middleware/auth");
-const accountRouter = require("./account");
+const accountRouter = require("./accccount");
 const storeRouter = require("./store.routes");
 const treatmentRouter = require("./treatment.routes");
 const postRouter = require("./post.routes");
@@ -22,7 +22,7 @@ routerAPI.get("/", (req, res) => {
   return res.status(200).json("Hello world api 1");
 });
 
-routerAPI.post("/register", auth, createUser);
+routerAPI.post("/register", auth, createAccount);
 routerAPI.post("/login", auth, handleLogin);
 routerAPI.get("/user", auth, getUser);
 routerAPI.get("/account", auth, getAccount);

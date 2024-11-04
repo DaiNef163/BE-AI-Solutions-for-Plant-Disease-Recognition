@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const genaration = require('../helper/genaration.js');
+const genaration = require("../helper/genaration.js");
 
-const Accounts = new Schema( {
+const Accounts = new Schema(
+  {
     name: {
       type: String,
       required: true,
@@ -51,8 +52,7 @@ const Accounts = new Schema( {
   },
   {
     timestamps: true,
-    collection: "users",
   }
 );
 
-module.exports=mongoose.model('Accounts', Accounts, 'accounts'); 
+module.exports = mongoose.model("Accounts", Accounts);

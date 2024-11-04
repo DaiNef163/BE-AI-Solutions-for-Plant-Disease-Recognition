@@ -1,5 +1,5 @@
-const Account = require("../models/account")
-const Role = require("../models/role");
+const Account = require("../models/account");
+
 module.exports.requireAuth = async (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
@@ -7,25 +7,18 @@ module.exports.requireAuth = async (req, res, next) => {
       tokenUser: token,
       deleted: false,
     }).select("-password");
-    const permission = await Role.findOne({ title: user.role }).select(
-      "permission -_id"
-    );
 
     if (!user) {
-      res.json({
+      return res.status(400).json({
         code: 400,
         message: "Token không hợp lệ",
       });
-
-      return;
     }
 
     req.user = user;
-    req.permission = permission;
-    console.log(req.permission)
     next();
   } else {
-    res.json({
+    res.status(400).json({
       code: 400,
       message: "Vui lòng gửi kèm token",
     });

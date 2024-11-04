@@ -1,24 +1,31 @@
-const User = require("../models/account");
+const Accounts = require("../models/account");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const createUserService = async (name, email, password, phone, gender) => {
+const createUserService = async (
+  name,
+  email,
+  password,
+  phone,
+  gender,
+  role
+) => {
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await Accounts.findOne({ email });
     if (existingUser) {
       throw new Error("Email đã tồn tại. Vui lòng chọn email khác.");
     }
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
-    let result = await User.create({
+    let result = await Accounts.create({
       name: name,
       email: email,
       password: hashPassword,
       phone: phone,
       gender: gender,
-      role: "customer",
+      role: role,
     });
     return result;
   } catch (error) {
@@ -28,7 +35,7 @@ const createUserService = async (name, email, password, phone, gender) => {
 };
 const getUserService = async () => {
   try {
-    let result = await User.find({}).select("-password");
+    let result = await Accounts.find({}).select("-password");
     return result;
   } catch (error) {
     console.log(error);
@@ -37,7 +44,7 @@ const getUserService = async () => {
 };
 const loginService = async (email, password) => {
   try {
-    const user = await User.findOne({ email: email });
+    const user = await Accounts.findOne({ email: email });
     if (user) {
       const isMatchPassword = await bcrypt.compare(password, user.password);
 
@@ -60,6 +67,7 @@ const loginService = async (email, password) => {
           user: {
             email: user.email,
             name: user.name,
+            role: user.role,
           },
         };
       }

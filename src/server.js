@@ -7,7 +7,7 @@ const connection = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
-const routerUser = require("./routes/user.routes");
+const routerUser = require("./routes/Account.routes");
 
 const app = express();
 const port = process.env.PORT || 8888;
@@ -16,7 +16,7 @@ const port = process.env.PORT || 8888;
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,  
+    credentials: true,
   })
 );
 app.use(cookieParser());

@@ -1,5 +1,5 @@
 const SendmailTransport = require("nodemailer/lib/sendmail-transport");
-const Accounts = require("../models/account");
+const User = require("../models/account");
 const {
   createUserService,
   loginService,
@@ -14,9 +14,17 @@ const {
   uploadMultipleFile,
 } = require("../services/fileServiceUpload");
 
-const createUser = async (req, res) => {
-  const { name, email, password, phone, gender } = req.body;
-  const data = await createUserService(name, email, password, phone, gender);
+const createAccount = async (req, res) => {
+  const { name, email, password, phone, gender, role, tokenUser } = req.body;
+  const data = await createUserService(
+    name,
+    email,
+    password,
+    phone,
+    gender,
+    role,
+    tokenUser
+  );
   return res.status(201).json(data);
 };
 const handleLogin = async (req, res) => {
@@ -41,7 +49,7 @@ const userForgetPassword = async (req, res) => {
   }
 
   const email = req.body.email;
-  const account = await Accounts.findOne({ email: email });
+  const account = await User.findOne({ email: email });
 
   if (!account) {
     res.status(400).json("Email không đúng");
@@ -121,7 +129,7 @@ const resetPassword = async (req, res) => {
     return res.status(400).json("Yêu cầu nhập email và mật khẩu mới");
   }
 
-  const user = await Accounts.findOne({ email: email });
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     return res.status(400).json("Người dùng không tồn tại");
@@ -160,7 +168,7 @@ const uploadMultipleImage = async (req, res) => {
   res.send("ok file");
 };
 module.exports = {
-  createUser,
+  createAccount,
   handleLogin,
   getUser,
   getAccount,

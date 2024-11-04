@@ -10,8 +10,8 @@ const Products = new Schema(
     price: { type: Number, required: true },
     description: { type: String, require: true },
     discount: { type: Number, default: 0 },
-    images: [],
-    accept:{type: String, default: false},
+    images: { type: String },
+    accept: { type: String, default: false },
     slug: {
       type: String,
       slug: "productName",

@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  createUser,
   handleLogin,
   getUser,
   getAccount,
@@ -9,6 +8,7 @@ const {
   resetPassword,
   uploadSingleImage,
   uploadMultipleImage,
+  createAccount,
 } = require("../controllers/userController");
 const delay = require("../middleware/delay");
 const auth = require("../middleware/auth");
@@ -20,7 +20,7 @@ routerUser.get("/", (req, res) => {
   return res.status(200).json("Hello world api 1");
 });
 
-routerUser.post("/register", auth, createUser);
+routerUser.post("/register", auth, createAccount);
 routerUser.post("/login", auth, handleLogin);
 routerUser.get("/user", auth, getUser);
 routerUser.get("/account", auth, getAccount);
