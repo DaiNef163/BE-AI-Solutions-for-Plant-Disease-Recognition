@@ -39,14 +39,11 @@ cloudinary.config({
   secure: true,
 });
 
-// Log the configuration
 console.log("cloudinary.config()", cloudinary.config());
 
 (async () => {
   try {
-    //using mongoose
     await connection();
-
     app.listen(port, () => {
       console.log(`http://localhost:${port}`);
     });

@@ -8,11 +8,15 @@ const productController = require("../controllers/admin/productController");
 const {
   createProduct,
   viewProduct,
+  nameLeaf,
+  detailProduct,
 } = require("../controllers/product.controller");
 
 // router.get("/", productController.getAll);
 
 router.get("/view", viewProduct);
+router.get("/nameLeaf", nameLeaf);
+router.get("/detail/:id", detailProduct);
 router.post("/create", auth.requireAuth, createProduct);
 
 // router.get("/admin",auth.requireAuth,productController.productAdmin)

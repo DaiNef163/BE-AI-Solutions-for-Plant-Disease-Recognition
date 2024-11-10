@@ -4,7 +4,7 @@ const {
   createUserService,
   loginService,
   getUserService,
-} = require("../services/userService");
+} = require("../services/userService.service");
 const nodeMailer = require("nodemailer");
 const { text } = require("express");
 const forgotPassword = require("../models/forgot-password");
@@ -12,20 +12,29 @@ const bcrypt = require("bcrypt");
 const {
   uploadSingleFile,
   uploadMultipleFile,
-} = require("../services/fileServiceUpload");
+} = require("../services/fileServiceUpload.service");
 
 const createAccount = async (req, res) => {
-  const { name, email, password, phone, gender, role, tokenUser } = req.body;
+  const { name, age, phone, gender, email, password, role, tokenUser } =
+    req.body;
+  console.log(req.body);
+
+try {
   const data = await createUserService(
     name,
-    email,
-    password,
+    age,
     phone,
     gender,
+    email,
+    password,
     role,
     tokenUser
   );
   return res.status(201).json(data);
+} catch (error) {
+  console.log(error);
+  
+}
 };
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;

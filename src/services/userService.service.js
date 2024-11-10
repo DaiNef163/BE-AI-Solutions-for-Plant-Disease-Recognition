@@ -2,15 +2,18 @@ const Accounts = require("../models/account");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
+const cart = require("../models/cart");
 require("dotenv").config();
 
 const createUserService = async (
   name,
-  email,
-  password,
+  age,
   phone,
   gender,
-  role
+  email,
+  password,
+  role,
+  tokenUser
 ) => {
   try {
     const existingUser = await Accounts.findOne({ email });
@@ -20,13 +23,17 @@ const createUserService = async (
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
     let result = await Accounts.create({
-      name: name,
-      email: email,
-      password: hashPassword,
-      phone: phone,
-      gender: gender,
-      role: role,
+      name:name,
+      age:age ,
+      phone:phone,
+      gender:gender,
+      email:email,
+      password:hashPassword,
+      role:role, 
+      tokenUser:tokenUser
     });
+    const newCart = new cart({ owner: result._id, products: [] });
+    await newCart.save();
     return result;
   } catch (error) {
     console.log(error);
@@ -55,15 +62,17 @@ const loginService = async (email, password) => {
         };
       } else {
         const payload = {
+          tokenUser:user.tokenUser,
           email: user.email,
           name: user.name,
         };
         const access_token = await jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRE,
+          expiresIn: "1h",
         });
         return {
           EC: 0,
           access_token,
+          tokenUser:user.tokenUser,
           user: {
             email: user.email,
             name: user.name,
@@ -79,7 +88,10 @@ const loginService = async (email, password) => {
     }
   } catch (error) {
     console.log(error);
-    return null;
+    return {
+      success: false,
+      message: error.message || "Có lỗi xảy ra khi tạo tài khoản.",
+    };
   }
 };
 

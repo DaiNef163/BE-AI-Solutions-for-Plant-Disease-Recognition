@@ -9,6 +9,9 @@ const Accounts = new Schema(
       required: true,
       trim: true,
     },
+    age: {
+      type: Number,
+    },
     email: {
       type: String,
       required: true,

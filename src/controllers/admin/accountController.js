@@ -3,7 +3,7 @@ const ForgotPassword = require("../../models/forgot-password");
 const md5 = require("md5");
 const helperPassword = require("../../helper/genaration");
 const sendMail = require("../../helper/sendMail");
-const Accounts = require("../../models/account")
+const Accounts = require("../../models/account");
 
 module.exports.allAccount = async function (req, res) {
   try {
@@ -31,13 +31,13 @@ module.exports.createAccount = async function (req, res) {
       const name = req.body.name;
       const email = req.body.email;
       const password = md5(req.body.password);
-      const role = req.body.role
+      const role = req.body.role;
 
       const account = new Accounts({
         name: name,
         email: email,
         password: password,
-        role:role
+        role: role,
       });
       await account.save();
       res.status(200).json(account);
@@ -46,8 +46,8 @@ module.exports.createAccount = async function (req, res) {
     }
   } else {
     res.status(400).json("Bạn không có quyền này");
-  }}
-;
+  }
+};
 
 module.exports.Detail = async function (req, res) {
   if (req.permission.permission.includes("account_view")) {
@@ -100,8 +100,8 @@ module.exports.Login = async function (req, res) {
   const password = req.body.password;
 
   const account = await Accounts.findOne({
-    email: email
-  })
+    email: email,
+  });
 
   if (!account) {
     res.json({ message: "not find user" });

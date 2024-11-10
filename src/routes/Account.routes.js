@@ -9,7 +9,7 @@ const {
   uploadSingleImage,
   uploadMultipleImage,
   createAccount,
-} = require("../controllers/userController");
+} = require("../controllers/userController.controller");
 const delay = require("../middleware/delay");
 const auth = require("../middleware/auth");
 const routerUser = express.Router();

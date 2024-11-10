@@ -1,25 +1,40 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Posts = new Schema(
+const PostSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Accounts", 
+      required: true,
     },
-    title: String,
-    text: String,
-    images: [],
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    images: [
+      {
+        type: String, 
+      },
+    ],
     comments: [
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "Accounts",
         },
         text: {
           type: String,
+          required: true,
         },
         name: {
           type: String,
+          trim: true,
         },
         date: {
           type: Date,
@@ -31,14 +46,10 @@ const Posts = new Schema(
       type: Boolean,
       default: false,
     },
-    date: {
-      type: Date,
-      default: Date.now,
-    },
   },
   {
-    timestamps: true,
+    timestamps: true, 
   }
 );
 
-module.exports = mongoose.model("Posts", Posts, "PostNews");
+module.exports = mongoose.model("Posts", PostSchema, "PostNews");
