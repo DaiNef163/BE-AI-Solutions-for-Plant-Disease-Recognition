@@ -1,5 +1,5 @@
 const SendmailTransport = require("nodemailer/lib/sendmail-transport");
-const User = require("../models/account");
+const Accounts = require("../models/account");
 const {
   createUserService,
   loginService,
@@ -19,36 +19,33 @@ const createAccount = async (req, res) => {
     req.body;
   console.log(req.body);
 
-try {
-  const data = await createUserService(
-    name,
-    age,
-    phone,
-    gender,
-    email,
-    password,
-    role,
-    tokenUser
-  );
-  return res.status(201).json(data);
-} catch (error) {
-  console.log(error);
-  
-}
+  try {
+    const data = await createUserService(
+      name,
+      age,
+      phone,
+      gender,
+      email,
+      password,
+      role,
+      tokenUser
+    );
+    return res.status(201).json(data);
+  } catch (error) {
+    console.log(error);
+  }
 };
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
   const data = await loginService(email, password);
   return res.status(200).json(data);
 };
-const getUser = async (req, res) => {
-  // const { name, email, password } = req.body;
-  const data = await getUserService();
 
-  return res.status(200).json(data);
-};
-const getAccount = async (req, res) => {
-  return res.status(200).json(req.users);
+const jwt = require("jsonwebtoken");
+const account = require("../models/account");
+
+const getUser = async (req, res) => {
+
 };
 
 const userForgetPassword = async (req, res) => {
@@ -138,7 +135,7 @@ const resetPassword = async (req, res) => {
     return res.status(400).json("Yêu cầu nhập email và mật khẩu mới");
   }
 
-  const user = await User.findOne({ email: email });
+  const user = await Accounts.findOne({ email: email });
 
   if (!user) {
     return res.status(400).json("Người dùng không tồn tại");
@@ -180,7 +177,6 @@ module.exports = {
   createAccount,
   handleLogin,
   getUser,
-  getAccount,
   userForgetPassword,
   verifyOTP,
   resetPassword,

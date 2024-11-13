@@ -17,6 +17,13 @@ exports.addToCart = async (req, res) => {
 
   try {
     const { productId, quantity } = req.body;
+    const product = await Products.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        code: 404,
+        message: "Sản phẩm không tồn tại",
+      });
+    }
 
     let cart = await Cart.findOne({ owner: req.user._id });
 
@@ -26,14 +33,24 @@ exports.addToCart = async (req, res) => {
     if (!Array.isArray(cart.products)) {
       cart.products = [];
     }
+
     const existingItem = cart.products.find(
       (item) => item.productId.toString() === productId.toString()
     );
+
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
       cart.products.push({ productId, quantity });
     }
+
+    // Kiểm tra sản phẩm đã bị xóa chưa
+    cart.products = cart.products.map(item => {
+      if (!item.productId) {
+        item.deleted = true;  // Đánh dấu sản phẩm đã xóa
+      }
+      return item;
+    });
 
     await cart.save();
     res.json(cart);
@@ -46,12 +63,13 @@ exports.addToCart = async (req, res) => {
   }
 };
 
+
 exports.getCart = async (req, res) => {
   try {
     const userId = req.user._id;
 
     const cart = await Cart.findOne({ owner: userId }).populate({
-      path: "products.productId", 
+      path: "products.productId",
       select: "productName price images description discount",
     });
 

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const mongooseDelete = require("mongoose-delete");
 
-// Schema cho sản phẩm trong giỏ hàng
 const ProductItemSchema = new Schema(
   {
     productId: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
@@ -21,7 +20,6 @@ const CartSchema = new Schema(
   { timestamps: true }
 );
 
-// Thêm plugin xóa mềm (soft delete)
 CartSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,

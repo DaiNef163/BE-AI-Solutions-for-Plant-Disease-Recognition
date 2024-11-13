@@ -77,6 +77,9 @@ const loginService = async (email, password) => {
             email: user.email,
             name: user.name,
             role: user.role,
+            age:user.age,
+            gender:user.gender,
+            avatar:user.avatar
           },
         };
       }

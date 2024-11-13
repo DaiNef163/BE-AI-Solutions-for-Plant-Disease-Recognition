@@ -11,7 +11,7 @@ const Products = new Schema(
     description: { type: String, required: true },
     discount: { type: Number, default: 0 },
     images: { type: [String] },
-    nameLeaf: { type: String, required: true, index: true },
+    nameLeaf: { type: String, required: true, ref: "nameLeaf" },
     accept: { type: Boolean, default: false },
     slug: {
       type: String,

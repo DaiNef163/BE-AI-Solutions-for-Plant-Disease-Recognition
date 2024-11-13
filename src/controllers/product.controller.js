@@ -20,7 +20,7 @@ const createProduct = async (req, res) => {
   try {
     let { productName, price, description, discount, accept, slug, nameLeaf } =
       req.body;
-    let imageURL = [];
+    let imageURL = "";
     console.log(req.files);
 
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -28,11 +28,7 @@ const createProduct = async (req, res) => {
     }
 
     let resultsArr = [];
-    if (Object.keys(req.files).length === 1) {
-      resultsArr = await uploadSingleFile(req.files.images);
-    } else {
-      resultsArr = await uploadMultipleFile(req.files.images);
-    }
+    resultsArr = await uploadSingleFile(req.files.images);
 
     console.log(resultsArr);
 
@@ -47,7 +43,7 @@ const createProduct = async (req, res) => {
       console.error("resultsArr is not an array:", resultsArr);
       return res.status(500).json({ message: "Lỗi trong quá trình tải ảnh" });
     }
-
+    const nameLeafValue = nameLeaf.trim();
     let product = await Products.create({
       productName,
       price,
@@ -56,7 +52,7 @@ const createProduct = async (req, res) => {
       images: imageURL,
       accept,
       slug,
-      nameLeaf,
+      nameLeaf: nameLeafValue,
     });
 
     res.json(product);
