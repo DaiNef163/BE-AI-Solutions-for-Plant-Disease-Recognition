@@ -13,6 +13,9 @@ const productRouter = require("./product.routes");
 const cartRoutes = require("./shoppingcart.routes");
 const order = require("./order.routes");
 const nameLeaf = require("./leaf.routes");
+const payment = require("./Payment.routes")
+const purchase = require("./purchaseHistory.routes")
+const crop = require("./Crop.routes")
 const routerAPI = express.Router();
 // const roleRouter = require("./role.routes");
 // const authAdmin = require("../middleware/authAdmin");
@@ -31,5 +34,8 @@ routerAPI.use("/treatments", treatmentRouter);
 routerAPI.use("/post", postRouter);
 routerAPI.use("/product", productRouter);
 routerAPI.use("/leaf", nameLeaf);
+routerAPI.use("/payment",payment)
+routerAPI.use("/purchase",purchase)
+routerAPI.use("/crop",crop)
 // routerAPI.use("/role", authAdmin.requireAuth, roleRouter);
 module.exports = routerAPI;
