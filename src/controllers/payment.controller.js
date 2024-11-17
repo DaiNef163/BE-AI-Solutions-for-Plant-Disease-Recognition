@@ -1,18 +1,23 @@
 const ProductsBuy = require("../models/productBuy");
+const Cart = require("../models/cart")
 const axios = require('axios').default; 
 const CryptoJS = require('crypto-js'); 
 const moment = require('moment'); 
 const qs = require('qs');
+const product = require("../models/product");
 
 module.exports.createPay = async function (req, res) {
   try {
-    const amount = req.body.totalCost;
-    const items = req.body.products;
-    const user = req.user._id;
-    
-    if (!amount || !items || !user) {
-      return res.status(400).json({ message: "Missing required fields: totalCost, products, or user." });
-    }
+    const cart = await Cart.findOne({owner: req.user._id})
+
+    let item = []
+
+    cart.products.forEach(product =>{
+      item.push(product)
+    })
+
+    const totalCost = cart.totalCost
+
 
     const transID = Math.floor(Math.random() * 1000000);
     const embed_data = {
@@ -22,12 +27,12 @@ module.exports.createPay = async function (req, res) {
     const order = {
       app_id: process.env.APP_ID,
       app_trans_id: `${moment().format('YYMMDD')}_${transID}`, 
-      app_user: user,
+      app_user: cart.owner,
       app_time: Date.now(), 
-      item: JSON.stringify(items), 
+      item: JSON.stringify(item), 
       embed_data: JSON.stringify(embed_data), 
-      amount: amount,
-      callback_url: 'https://7ff6-42-115-179-177.ngrok-free.app/payment/callback', 
+      amount: totalCost,
+      callback_url: 'https://b82a-2001-ee1-f403-7850-bc21-f643-b839-5a76.ngrok-free.app/payment/callback', 
       description: `Lazada - Payment for the order #${transID}`, 
       bank_code: '', 
     };
@@ -54,7 +59,7 @@ module.exports.createPay = async function (req, res) {
     // Gửi yêu cầu thanh toán đến Zalopay
     const result = await axios.post(process.env.ENDPOINT, null, { params: order });
 
-    console.log(result.data.order_url)
+    console.log("...."+result.data.order_url)
 
     return res.status(200).json(result.data.order_url);
 
