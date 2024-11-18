@@ -32,7 +32,7 @@ module.exports.createPay = async function (req, res) {
       item: JSON.stringify(item), 
       embed_data: JSON.stringify(embed_data), 
       amount: totalCost,
-      callback_url: 'https://b82a-2001-ee1-f403-7850-bc21-f643-b839-5a76.ngrok-free.app/payment/callback', 
+      callback_url: 'https://4390-2001-ee1-f403-7850-bc21-f643-b839-5a76.ngrok-free.app/payment/callback', 
       description: `Lazada - Payment for the order #${transID}`, 
       bank_code: '', 
     };
