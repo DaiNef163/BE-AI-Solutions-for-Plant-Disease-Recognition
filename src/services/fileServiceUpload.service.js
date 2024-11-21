@@ -2,7 +2,7 @@ const path = require("path");
 const cloudinary = require("./cloudinary.service");
 
 const uploadSingleFile = async (fileObject) => {
-  let resultsArr = []; 
+  let resultsArr = [];
 
   try {
     if (!fileObject.data) {
@@ -11,27 +11,24 @@ const uploadSingleFile = async (fileObject) => {
       return resultsArr; // Trả về nếu không có tệp
     }
 
-
     const uploadPromise = new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          resource_type: "image", // Chỉ định loại tài nguyên là hình ảnh
+          resource_type: "image",
         },
         (error, result) => {
           if (error) {
             console.error("Lỗi tải lên:", error);
             reject(error.message);
           } else {
-            resolve(result.secure_url); 
+            resolve(result.secure_url);
           }
         }
       );
 
-
       stream.end(fileObject.data);
     });
 
-    // Chờ kết quả từ Cloudinary
     const secureUrl = await uploadPromise;
     resultsArr.push({ path: secureUrl, error: null });
   } catch (error) {
@@ -41,8 +38,6 @@ const uploadSingleFile = async (fileObject) => {
 
   return resultsArr;
 };
-
-  
 
 const uploadMultipleFile = async (fileArray) => {
   let resultsArr = [];

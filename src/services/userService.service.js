@@ -23,14 +23,14 @@ const createUserService = async (
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
     let result = await Accounts.create({
-      name:name,
-      age:age ,
-      phone:phone,
-      gender:gender,
-      email:email,
-      password:hashPassword,
-      role:role, 
-      tokenUser:tokenUser
+      name: name,
+      age: age,
+      phone: phone,
+      gender: gender,
+      email: email,
+      password: hashPassword,
+      role: role,
+      tokenUser: tokenUser,
     });
     const newCart = new cart({ owner: result._id, products: [] });
     await newCart.save();
@@ -62,7 +62,7 @@ const loginService = async (email, password) => {
         };
       } else {
         const payload = {
-          tokenUser:user.tokenUser,
+          tokenUser: user.tokenUser,
           email: user.email,
           name: user.name,
         };
@@ -72,14 +72,15 @@ const loginService = async (email, password) => {
         return {
           EC: 0,
           access_token,
-          tokenUser:user.tokenUser,
+          tokenUser: user.tokenUser,
           user: {
+            _id: user._id,
             email: user.email,
             name: user.name,
             role: user.role,
-            age:user.age,
-            gender:user.gender,
-            avatar:user.avatar
+            age: user.age,
+            gender: user.gender,
+            avatar: user.avatar,
           },
         };
       }

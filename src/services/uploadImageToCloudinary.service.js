@@ -1,5 +1,5 @@
 require("dotenv").config();
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
 
 const uploadImageToCloudinary = async (file) => {
@@ -15,10 +15,12 @@ const uploadImageToCloudinary = async (file) => {
     const result = await new Promise((resolve, reject) => {
       bufferStream.pipe(
         cloudinary.uploader.upload_stream(
-          { folder: 'cloudinary' },
+          { folder: "cloudinary" },
           (error, result) => {
             if (error) {
-              return reject(new Error("Upload to Cloudinary failed: " + error.message));
+              return reject(
+                new Error("Upload to Cloudinary failed: " + error.message)
+              );
             }
             resolve(result);
           }
@@ -27,12 +29,11 @@ const uploadImageToCloudinary = async (file) => {
     });
 
     console.log("Uploaded to Cloudinary:", result);
-    return result; // Trả về kết quả từ Cloudinary
+    return result;
   } catch (error) {
     console.error("Upload to Cloudinary failed:", error);
     throw error;
   }
 };
-
 
 module.exports = uploadImageToCloudinary;
