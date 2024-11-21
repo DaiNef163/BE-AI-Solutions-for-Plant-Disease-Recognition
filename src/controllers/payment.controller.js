@@ -10,11 +10,9 @@ module.exports.createPay = async function (req, res) {
     const user = req.user._id;
 
     if (!amount || !items || !user) {
-      return res
-        .status(400)
-        .json({
-          message: "Missing required fields: totalCost, products, or user.",
-        });
+      return res.status(400).json({
+        message: "Missing required fields: totalCost, products, or user.",
+      });
     }
 
     const transID = Math.floor(Math.random() * 1000000);
@@ -63,11 +61,9 @@ module.exports.createPay = async function (req, res) {
     return res.status(200).json(result.data.order_url);
   } catch (error) {
     console.error("Error during payment request:", error);
-    return res
-      .status(500)
-      .json({
-        message: "An error occurred while processing the payment request.",
-      });
+    return res.status(500).json({
+      message: "An error occurred while processing the payment request.",
+    });
   }
 };
 
