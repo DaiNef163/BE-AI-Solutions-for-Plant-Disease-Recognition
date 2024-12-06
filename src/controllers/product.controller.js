@@ -86,6 +86,8 @@ const nameLeaf = async (req, res) => {
 const detailProduct = async (req, res) => {
   try {
     const productId = req.params.id;
+    console.log("checkk", productId);
+
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ error: "Invalid product ID" });
     }
@@ -102,4 +104,64 @@ const detailProduct = async (req, res) => {
   }
 };
 
-module.exports = { createProduct, viewProduct, nameLeaf, detailProduct };
+const editProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  const { productName, price, description, discount, nameLeaf } = req.body;
+  const images = req.file?.path;
+  console.log("check productId", productId);
+
+  try {
+    const updateData = {
+      productName,
+      price,
+      description,
+      discount,
+      nameLeaf,
+      images,
+    };
+    if (images) updateData.images = images;
+
+    await Products.updateOne(updateData);
+    res.status(200).json({ message: "Sản phẩm đã được cập nhật." });
+    console.log(updateData);
+  } catch (error) {
+    res.status(500).json({ message: "Cập nhật sản phẩm thất bại.", error });
+  }
+};
+const getProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    const product = await Products.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại." });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    console.log(error);
+
+    res
+      .status(500)
+      .json({ message: "Lấy thông tin sản phẩm thất bại.", error });
+  }
+};
+const deleteProduct = async (req, res) => {
+  let productId = req.params.id;
+  try {
+    await Products.deleteOne(productId);
+    res.json(productId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  createProduct,
+  viewProduct,
+  nameLeaf,
+  detailProduct,
+  editProduct,
+  getProduct,
+  deleteProduct,
+};
