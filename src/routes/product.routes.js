@@ -9,6 +9,9 @@ const {
   createProduct,
   viewProduct,
   detailProduct,
+  editProduct,
+  getProduct,
+  deleteProduct,
 } = require("../controllers/product.controller");
 const Product = require("../models/product");
 
@@ -17,24 +20,10 @@ const Product = require("../models/product");
 router.get("/view", viewProduct);
 router.get("/detail/:id", detailProduct);
 router.post("/create", auth.requireAuth, createProduct);
-router.get("/phantrang", async (req, res) => {
-  const page = parseInt(req.query.page) || 1; // Trang hiện tại
-  const limit = parseInt(req.query.limit) || 4; // Số sản phẩm mỗi trang
-  const skip = (page - 1) * limit;
-
-  try {
-    const products = await Product.find().skip(skip).limit(limit);
-    const totalProducts = await Product.countDocuments();
-    const totalPages = Math.ceil(totalProducts / limit);
-
-    res.json({
-      products,
-      totalPages,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching products" });
-  }
-});
+router.get("/editproduct/:id", auth.requireAuth, getProduct);
+router.get("/deleteproduct/:id", auth.requireAuth, getProduct);
+router.post("/editproduct", auth.requireAuth, editProduct);
+router.post("/deleteproduct", auth.requireAuth, deleteProduct);
 
 // router.get("/admin",auth.requireAuth,productController.productAdmin)
 // router.patch("/accept/:id",auth.requireAuth,productController.acceptProduct)
