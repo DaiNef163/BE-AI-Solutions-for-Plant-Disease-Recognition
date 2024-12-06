@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ProductsBuy = new Schema({
+const Purchases = new Schema({
     userId:{ type: mongoose.Schema.Types.ObjectId, ref: "Account"},
+    paymentId:String,
     productName: [{
       productId: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
       quantity: Number
@@ -20,4 +21,4 @@ const ProductsBuy = new Schema({
     timestamps :true
   })
   
-  module.exports=mongoose.model('ProductsBuy', ProductsBuy, 'ProductsBuys'); 
+  module.exports=mongoose.model('Purchases', Purchases, 'purchases'); 

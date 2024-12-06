@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const TestOrder = require("../controllers/order.controller");
+const Order = require("../controllers/order.controller");
+const auth = require("../middleware/authAdmin")
 
-router.get("/dsadsa", TestOrder);
+
+router.get("/", auth.requireAuth, Order.Order);
 
 
 module.exports = router
