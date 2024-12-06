@@ -13,7 +13,7 @@ module.exports.createPay = async function (req, res) {
   
     const transID = Math.floor(Math.random() * 1000000);
     const embed_data = {
-      redirecturl: 'http://localhost:5173', // Link sau khi thanh toán thành công
+      redirecturl: 'http://localhost:5173/', // Link sau khi thanh toán thành công
     };
 
     const order = {
@@ -115,5 +115,5 @@ module.exports.callBack= async function (req,res) {
     }
   
     // thông báo kết quả cho ZaloPay server
-    return  res.json(result);
+    res.json(result);
 }
