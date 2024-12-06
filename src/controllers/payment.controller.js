@@ -1,38 +1,30 @@
-const ProductsBuy = require("../models/productBuy");
+const ProductsBuys = require("../models/productBuy");
 const Cart = require("../models/cart")
+const purchases = require("../models/purchases")
 const axios = require('axios').default; 
 const CryptoJS = require('crypto-js'); 
 const moment = require('moment'); 
 const qs = require('qs');
-const product = require("../models/product");
 
 module.exports.createPay = async function (req, res) {
   try {
-    const cart = await Cart.findOne({owner: req.user._id})
+    var ProductsBuy = await ProductsBuys.findOne({userId: req.user._id})
 
-    let item = []
-
-    cart.products.forEach(product =>{
-      item.push(product)
-    })
-
-    const totalCost = cart.totalCost
-
-
+  
     const transID = Math.floor(Math.random() * 1000000);
     const embed_data = {
-      redirecturl: 'https://fb.com', // Link sau khi thanh toán thành công
+      redirecturl: 'http://localhost:5173', // Link sau khi thanh toán thành công
     };
 
     const order = {
       app_id: process.env.APP_ID,
       app_trans_id: `${moment().format('YYMMDD')}_${transID}`, 
-      app_user: cart.owner,
+      app_user: ProductsBuy.userId,
       app_time: Date.now(), 
-      item: JSON.stringify(item), 
+      item: JSON.stringify(ProductsBuy.productName), 
       embed_data: JSON.stringify(embed_data), 
-      amount: totalCost,
-      callback_url: 'https://4390-2001-ee1-f403-7850-bc21-f643-b839-5a76.ngrok-free.app/payment/callback', 
+      amount: ProductsBuy.totalCost,
+      callback_url: 'https://8713-1-54-247-155.ngrok-free.app/payment/callback', 
       description: `Lazada - Payment for the order #${transID}`, 
       bank_code: '', 
     };
@@ -51,7 +43,7 @@ module.exports.createPay = async function (req, res) {
       '|' +
       order.embed_data +
       '|' +
-      order.item;
+      order.item ;
 
     
     order.mac = CryptoJS.HmacSHA256(data, process.env.KEY1).toString();
@@ -93,15 +85,21 @@ module.exports.callBack= async function (req,res) {
         // merchant cập nhật trạng thái cho đơn hàng ở đây
         let dataJson = JSON.parse(dataStr, process.env.KEY2);
         const itemjs = JSON.parse(dataJson.item);
-        console.log(itemjs)
+        const info = await ProductsBuys.findOne({userId:dataJson.app_user}).select("info")
+        console.log(info)
         const productObject = {
           userId:dataJson.app_user,
           paymentId:dataJson.app_trans_id,
           productName: itemjs,
           totalCost:dataJson.amount,
+          info: {
+            address: info.info.address,
+            phone: info.info.phone
+          }
         }
-        const product = new ProductsBuy(productObject)
+        const product = new purchases(productObject)
         await product.save()
+        await ProductsBuys.deleteOne({userId:dataJson.app_user})
         console.log(
           "update order's status = success where app_trans_id =",
           dataJson['app_trans_id'],
@@ -117,5 +115,5 @@ module.exports.callBack= async function (req,res) {
     }
   
     // thông báo kết quả cho ZaloPay server
-    res.json(result);
+    return  res.json(result);
 }
