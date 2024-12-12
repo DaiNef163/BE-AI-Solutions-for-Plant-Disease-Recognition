@@ -23,16 +23,22 @@ const createProduct = async (req, res) => {
     let imageURL = "";
     console.log(req.files);
 
-    if (!req.files || Object.keys(req.files).length === 0) {
+    // Kiểm tra xem có tệp nào được tải lên không
+    if (
+      !req.files ||
+      !req.files.images ||
+      Object.keys(req.files.images).length === 0
+    ) {
       return res.status(400).json({ message: "Không có tệp nào được tải lên" });
     }
 
-    let resultsArr = [];
-    resultsArr = await uploadSingleFile(req.files.images);
+    // Xử lý tải lên nhiều ảnh
+    let resultsArr = await uploadMultipleFile(req.files.images); // Dựa vào logic upload trước đó
 
     console.log(resultsArr);
 
     if (Array.isArray(resultsArr)) {
+      // Lọc ra các URL hợp lệ của ảnh
       imageURL = resultsArr.map((result) => result.path).filter((path) => path);
       if (imageURL.length === 0) {
         return res
@@ -43,7 +49,11 @@ const createProduct = async (req, res) => {
       console.error("resultsArr is not an array:", resultsArr);
       return res.status(500).json({ message: "Lỗi trong quá trình tải ảnh" });
     }
-    const nameLeafValue = nameLeaf.trim();
+
+    // Làm sạch và kiểm tra `nameLeaf`
+    const nameLeafValue = nameLeaf ? nameLeaf.trim() : "";
+
+    // Tạo sản phẩm trong cơ sở dữ liệu
     let product = await Products.create({
       productName,
       price,
@@ -146,13 +156,25 @@ const getProduct = async (req, res) => {
       .json({ message: "Lấy thông tin sản phẩm thất bại.", error });
   }
 };
+
 const deleteProduct = async (req, res) => {
-  let productId = req.params.id;
+  const productId = req.params.id; // Get productId from URL parameter
+  if (!productId) {
+    return res.status(400).json({ error: "Product ID is required" });
+  }
+
   try {
-    await Products.deleteOne(productId);
-    res.json(productId);
+    const result = await Products.deleteOne({ _id: productId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Product deleted successfully", productId });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

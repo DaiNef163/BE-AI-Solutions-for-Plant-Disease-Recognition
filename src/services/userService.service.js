@@ -81,6 +81,7 @@ const loginService = async (email, password) => {
             age: user.age,
             gender: user.gender,
             avatar: user.avatar,
+            phone: user.phone,
           },
         };
       }

@@ -21,9 +21,9 @@ router.get("/view", viewProduct);
 router.get("/detail/:id", detailProduct);
 router.post("/create", auth.requireAuth, createProduct);
 router.get("/editproduct/:id", auth.requireAuth, getProduct);
-router.get("/deleteproduct/:id", auth.requireAuth, getProduct);
 router.post("/editproduct", auth.requireAuth, editProduct);
-router.post("/deleteproduct", auth.requireAuth, deleteProduct);
+router.get("/deleteproduct/:id", auth.requireAuth, getProduct);
+router.delete("/deleteproduct/:id", auth.requireAuth, deleteProduct);
 
 // router.get("/admin",auth.requireAuth,productController.productAdmin)
 // router.patch("/accept/:id",auth.requireAuth,productController.acceptProduct)
