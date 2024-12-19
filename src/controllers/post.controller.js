@@ -71,7 +71,7 @@ const createPostNews = async (req, res) => {
     res.json(result);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "tao bai viet that bai" });
+    res.status(500).json({ message: "Tao bai viet that bai" });
   }
 };
 const editPost = async (req, res) => {
