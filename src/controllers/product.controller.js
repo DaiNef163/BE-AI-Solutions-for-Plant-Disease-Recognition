@@ -6,10 +6,12 @@ const {
 } = require("../services/fileServiceUpload.service");
 const { faker } = require("@faker-js/faker");
 const path = require("path");
+const leaf = require("../models/leaf");
 
 const createProduct = async (req, res) => {
-  console.log("User role:", req.user.role);
+  console.log("User role:", req.user?.role);
 
+  // Kiểm tra quyền truy cập
   if (req.user.role !== "admin" && req.user.role !== "staff") {
     return res.status(403).json({
       code: 403,
@@ -18,43 +20,56 @@ const createProduct = async (req, res) => {
   }
 
   try {
-    let { productName, price, description, discount, accept, slug, nameLeaf } =
-      req.body;
-    let imageURL = "";
-    console.log(req.files);
+    // Lấy dữ liệu từ request body
+    const {
+      productName,
+      price,
+      description,
+      discount,
+      accept,
+      slug,
+      nameLeaf,
+    } = req.body;
+    const tokenUser = req.user._id; // Lấy `ObjectId` từ người dùng đã xác thực
+    let imageURL = [];
 
-    // Kiểm tra xem có tệp nào được tải lên không
-    if (
-      !req.files ||
-      !req.files.images ||
-      Object.keys(req.files.images).length === 0
-    ) {
+    console.log("Files received:", req.files);
+
+    // Kiểm tra file tải lên
+    if (!req.files?.images) {
       return res.status(400).json({ message: "Không có tệp nào được tải lên" });
     }
 
-    // Xử lý tải lên nhiều ảnh
-    let resultsArr = await uploadMultipleFile(req.files.images); // Dựa vào logic upload trước đó
+    const images = Array.isArray(req.files.images)
+      ? req.files.images
+      : [req.files.images];
 
-    console.log(resultsArr);
+    // Gọi hàm uploadMultipleFile
+    const resultsArr = await uploadMultipleFile(images);
 
     if (Array.isArray(resultsArr)) {
-      // Lọc ra các URL hợp lệ của ảnh
-      imageURL = resultsArr.map((result) => result.path).filter((path) => path);
+      imageURL = resultsArr.map((result) => result.path).filter(Boolean);
+
       if (imageURL.length === 0) {
         return res
           .status(500)
           .json({ message: "Không có ảnh hợp lệ nào được tải lên" });
       }
     } else {
-      console.error("resultsArr is not an array:", resultsArr);
+      console.error("Error: resultsArr is not an array", resultsArr);
       return res.status(500).json({ message: "Lỗi trong quá trình tải ảnh" });
     }
 
     // Làm sạch và kiểm tra `nameLeaf`
-    const nameLeafValue = nameLeaf ? nameLeaf.trim() : "";
+    const nameLeafValue = nameLeaf?.trim() || "";
 
-    // Tạo sản phẩm trong cơ sở dữ liệu
-    let product = await Products.create({
+    const existingLeaf = await leaf.findOne({ nameLeaf: nameLeaf });
+    if (!existingLeaf) {
+      return res.status(400).json({ message: "Loại lá không hợp lệ" });
+    }
+
+    // Tạo sản phẩm mới
+    const product = await Products.create({
       productName,
       price,
       description,
@@ -63,14 +78,38 @@ const createProduct = async (req, res) => {
       accept,
       slug,
       nameLeaf: nameLeafValue,
+      tokenUser: req.user.tokenUser,
     });
 
-    res.json(product);
+    res.status(201).json(product);
   } catch (error) {
-    console.log(error);
+    console.error("Error creating product:", error);
+
+    // Trả về lỗi chi tiết
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: "Dữ liệu không hợp lệ", error });
+    }
+
     res
       .status(500)
       .json({ message: "Tạo sản phẩm thất bại", error: error.message });
+  }
+};
+
+const viewProductUser = async (req, res) => {
+  try {
+    const tokenUser = req.user?.tokenUser; // Lấy tokenUser từ người dùng đã xác thực
+    if (!tokenUser) {
+      return res.status(400).json({ message: "tokenUser is required" });
+    }
+
+    // Truy vấn các sản phẩm của người dùng hiện tại
+    const products = await Products.find({ tokenUser: tokenUser });
+
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -130,15 +169,28 @@ const editProduct = async (req, res) => {
       nameLeaf,
       images,
     };
+
     if (images) updateData.images = images;
 
-    await Products.updateOne(updateData);
+    // Sửa lại để thêm điều kiện tìm kiếm sản phẩm theo productId
+    const result = await Products.updateOne(
+      { _id: productId },
+      { $set: updateData }
+    );
+
+    if (result.nModified === 0) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy sản phẩm để cập nhật." });
+    }
+
     res.status(200).json({ message: "Sản phẩm đã được cập nhật." });
     console.log(updateData);
   } catch (error) {
     res.status(500).json({ message: "Cập nhật sản phẩm thất bại.", error });
   }
 };
+
 const getProduct = async (req, res) => {
   const productId = req.params.id;
 
@@ -186,4 +238,5 @@ module.exports = {
   editProduct,
   getProduct,
   deleteProduct,
+  viewProductUser,
 };

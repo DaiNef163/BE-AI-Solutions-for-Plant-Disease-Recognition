@@ -4,7 +4,6 @@ const storageMulter = require("../helper/storageMulter");
 const upload = multer({ storage: storageMulter });
 const router = express.Router();
 const auth = require("../middleware/authAdmin");
-const productController = require("../controllers/admin/productController");
 const {
   createProduct,
   viewProduct,

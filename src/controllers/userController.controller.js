@@ -44,9 +44,7 @@ const handleLogin = async (req, res) => {
 const jwt = require("jsonwebtoken");
 const account = require("../models/account");
 
-const getUser = async (req, res) => {
-
-};
+const getUser = async (req, res) => {};
 
 const userForgetPassword = async (req, res) => {
   if (!req.body.email) {
@@ -173,6 +171,30 @@ const uploadMultipleImage = async (req, res) => {
   uploadMultipleFile(req.files.image);
   res.send("ok file");
 };
+
+const updateUserProfile = async (req, res) => {
+  const { name, email, phone, address, avatar } = req.body;
+
+  // Kiểm tra nếu avatar không được gửi, bỏ qua avatar trong quá trình cập nhật
+  const updateData = { name, email, phone, address };
+
+  // Chỉ cập nhật avatar nếu có giá trị
+  if (avatar) {
+    updateData.avatar = avatar;
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      updateData,
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to update profile" });
+  }
+};
+
 module.exports = {
   createAccount,
   handleLogin,
@@ -182,4 +204,5 @@ module.exports = {
   resetPassword,
   uploadSingleImage,
   uploadMultipleImage,
+  updateUserProfile,
 };

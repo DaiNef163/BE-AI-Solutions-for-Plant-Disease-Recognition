@@ -2,13 +2,13 @@ const express = require("express");
 const {
   handleLogin,
   getUser,
-  getAccount,
   userForgetPassword,
   verifyOTP,
   resetPassword,
   uploadSingleImage,
   uploadMultipleImage,
   createAccount,
+  updateUserProfile,
 } = require("../controllers/userController.controller");
 const delay = require("../middleware/delay");
 const routerUser = express.Router();
@@ -22,5 +22,7 @@ routerUser.get("/", (req, res) => {
 routerUser.post("/register", createAccount);
 routerUser.post("/login", handleLogin);
 routerUser.get("/user/profile", auth.requireAuth, getUser);
+routerUser.put("/update", auth.requireAuth, updateUserProfile);
+
 
 module.exports = routerUser;

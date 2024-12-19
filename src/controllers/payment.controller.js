@@ -8,51 +8,43 @@ const qs = require('qs');
 
 module.exports.createPay = async function (req, res) {
   try {
-    var ProductsBuy = await ProductsBuys.findOne({userId: req.user._id})
+    const { userId, productName, totalCost, userName } = req.body; // Kiểm tra đúng các trường
+    if (!userId || !productName || !totalCost || !userName) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
 
-  
+    // Tiếp tục xử lý yêu cầu
+    var ProductsBuy = await ProductsBuys.findOne({ userId }).populate('userId');
+    
+    // Kiểm tra ProductsBuy có tồn tại không
+    if (!ProductsBuy) {
+      return res.status(400).json({ message: "No products found for this user." });
+    }
+
+    // Tiến hành tạo đơn hàng thanh toán
     const transID = Math.floor(Math.random() * 1000000);
-    const embed_data = {
-      redirecturl: 'http://localhost:5173/', // Link sau khi thanh toán thành công
-    };
-
+    const embed_data = { redirecturl: 'http://localhost:5173/' };
     const order = {
       app_id: process.env.APP_ID,
-      app_trans_id: `${moment().format('YYMMDD')}_${transID}`, 
-      app_user: ProductsBuy.userId,
-      app_time: Date.now(), 
-      item: JSON.stringify(ProductsBuy.productName), 
-      embed_data: JSON.stringify(embed_data), 
-      amount: ProductsBuy.totalCost,
-      callback_url: 'https://8713-1-54-247-155.ngrok-free.app/payment/callback', 
-      description: `Lazada - Payment for the order #${transID}`, 
-      bank_code: '', 
+      app_trans_id: `${moment().format('YYMMDD')}_${transID}`,
+      app_user: ProductsBuy.userId._id.toString(),
+      app_time: Date.now(),
+      item: JSON.stringify(productName),
+      embed_data: JSON.stringify(embed_data),
+      amount: totalCost,
+      callback_url: 'https://your-callback-url.com/payment/callback',
+      description: `Payment for the order #${transID}`,
+      bank_code: '',
+      name: userName,
     };
 
-    
-    const data =
-      process.env.APP_ID +
-      '|' +
-      order.app_trans_id +
-      '|' +
-      order.app_user +
-      '|' +
-      order.amount +
-      '|' +
-      order.app_time +
-      '|' +
-      order.embed_data +
-      '|' +
-      order.item ;
-
-    
+    const data = `${process.env.APP_ID}|${order.app_trans_id}|${order.app_user}|${order.amount}|${order.app_time}|${order.embed_data}|${order.item}|${order.name}`;
     order.mac = CryptoJS.HmacSHA256(data, process.env.KEY1).toString();
 
     // Gửi yêu cầu thanh toán đến Zalopay
     const result = await axios.post(process.env.ENDPOINT, null, { params: order });
 
-    console.log("...."+result.data.order_url)
-
+    console.log('Order URL:', result.data.order_url);
     return res.status(200).json(result.data.order_url);
 
   } catch (error) {
@@ -60,6 +52,8 @@ module.exports.createPay = async function (req, res) {
     return res.status(500).json({ message: "An error occurred while processing the payment request." });
   }
 };
+
+
 
 /**
    * description: callback để Zalopay Server call đến khi thanh toán thành công.

@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const postController = require("../controllers/admin/postController");
 const auth = require("../middleware/authAdmin");
 // const multer  = require('multer')
 // const storageMulter =require('../helper/storageMulter')

@@ -13,6 +13,7 @@ const Products = new Schema(
     images: { type: [String] },
     nameLeaf: { type: String, required: true, ref: "nameLeaf" },
     accept: { type: Boolean, default: false },
+    tokenUser: { type: String, required: true, ref: "Accounts" },
     slug: {
       type: String,
       slug: "productName",

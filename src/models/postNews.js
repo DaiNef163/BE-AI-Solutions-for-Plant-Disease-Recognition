@@ -5,7 +5,7 @@ const PostSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Accounts", 
+      ref: "Accounts",
       required: true,
     },
     title: {
@@ -19,9 +19,10 @@ const PostSchema = new Schema(
     },
     images: [
       {
-        type: String, 
+        type: [String],
       },
     ],
+    tokenUser: { type: String, required: true, ref: "Accounts" },
     comments: [
       {
         user: {
@@ -48,7 +49,7 @@ const PostSchema = new Schema(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 

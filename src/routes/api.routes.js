@@ -6,8 +6,6 @@ const {
   getAccount,
 } = require("../controllers/userController.controller");
 const delay = require("../middleware/delay");
-const storeRouter = require("./store.routes");
-const treatmentRouter = require("./treatment.routes");
 const postRouter = require("./post.routes");
 const productRouter = require("./product.routes");
 const cartRoutes = require("./shoppingcart.routes");
@@ -16,6 +14,7 @@ const nameLeaf = require("./leaf.routes");
 const payment = require("./Payment.routes")
 const purchase = require("./purchaseHistory.routes")
 const crop = require("./Crop.routes")
+const Disease = require("./disease.routes")
 const routerAPI = express.Router();
 // const roleRouter = require("./role.routes");
 // const authAdmin = require("../middleware/authAdmin");
@@ -29,13 +28,12 @@ routerAPI.get("/", (req, res) => {
 
 routerAPI.use("/carts", cartRoutes);
 routerAPI.use("/order", order);
-routerAPI.use("/stores", storeRouter);
-routerAPI.use("/treatments", treatmentRouter);
 routerAPI.use("/post", postRouter);
 routerAPI.use("/product", productRouter);
 routerAPI.use("/leaf", nameLeaf);
 routerAPI.use("/payment",payment)
 routerAPI.use("/purchase",purchase)
 routerAPI.use("/crop",crop)
+routerAPI.use("/disease",Disease)
 // routerAPI.use("/role", authAdmin.requireAuth, roleRouter);
 module.exports = routerAPI;
