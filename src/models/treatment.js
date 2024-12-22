@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-
 //name: Tên của bệnh.
 // symptoms và causes: Miêu tả triệu chứng và nguyên nhân gây bệnh.
 // treatment và prevention: Phương pháp chữa trị và cách phòng ngừa.
@@ -9,7 +8,7 @@ const Schema = mongoose.Schema;
 
 const Treatment = new Schema(
   {
-name: {
+    name: {
       type: String,
       required: true,
       trim: true,

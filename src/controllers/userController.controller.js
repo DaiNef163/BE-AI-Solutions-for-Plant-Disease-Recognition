@@ -41,9 +41,6 @@ const handleLogin = async (req, res) => {
   return res.status(200).json(data);
 };
 
-const jwt = require("jsonwebtoken");
-const account = require("../models/account");
-
 const getUser = async (req, res) => {};
 
 const userForgetPassword = async (req, res) => {
@@ -53,7 +50,7 @@ const userForgetPassword = async (req, res) => {
   }
 
   const email = req.body.email;
-  const account = await User.findOne({ email: email });
+  const account = await Accounts.findOne({ email: email });
 
   if (!account) {
     res.status(400).json("Email không đúng");
@@ -184,11 +181,9 @@ const updateUserProfile = async (req, res) => {
   }
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      updateData,
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updateData, {
+      new: true,
+    });
     res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ error: "Failed to update profile" });

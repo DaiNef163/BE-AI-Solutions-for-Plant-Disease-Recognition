@@ -23,6 +23,9 @@ routerUser.post("/register", createAccount);
 routerUser.post("/login", handleLogin);
 routerUser.get("/user/profile", auth.requireAuth, getUser);
 routerUser.put("/update", auth.requireAuth, updateUserProfile);
+routerUser.post("/userForgetPassword", userForgetPassword);
+routerUser.post("/verifyotp", verifyOTP);
+routerUser.post("/resetPassword", resetPassword);
 
 
 module.exports = routerUser;

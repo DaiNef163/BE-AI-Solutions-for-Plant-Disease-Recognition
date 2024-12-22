@@ -11,12 +11,14 @@ const {
   editProduct,
   getProduct,
   deleteProduct,
+  viewProductUser,
 } = require("../controllers/product.controller");
 const Product = require("../models/product");
 
 // router.get("/", productController.getAll);
 
 router.get("/view", viewProduct);
+router.get("/maganeview", auth.requireAuth, viewProductUser);
 router.get("/detail/:id", detailProduct);
 router.post("/create", auth.requireAuth, createProduct);
 router.get("/editproduct/:id", auth.requireAuth, getProduct);
