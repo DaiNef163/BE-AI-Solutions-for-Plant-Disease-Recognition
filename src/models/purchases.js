@@ -13,7 +13,7 @@ const Purchases = new Schema(
     ],
     totalCost: Number,
     info: {
-      nameUser: String,
+      name: String,
       phone: String,
       address: String,
     },

@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Payment = require("../controllers/payment.controller");
-const auth = require("../middleware/authAdmin")
+const auth = require("../middleware/authAdmin"); // Middleware kiểm tra quyền admin (nếu cần)
 
-router.post("/",auth.requireAuth,Payment.createPay);
-router.post("/callback",Payment.callBack)
+router.post("/cash", auth.requireAuth, Payment.createPay);
 
-module.exports = router
+router.post("/online", auth.requireAuth, Payment.createOnlinePayment);
+
+module.exports = router;

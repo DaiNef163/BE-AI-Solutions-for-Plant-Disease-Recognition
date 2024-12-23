@@ -14,6 +14,31 @@ const {
   uploadMultipleFile,
 } = require("../services/fileServiceUpload.service");
 
+const getUser = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await Accounts.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      phone: user.phone,
+      role: user.role,
+      avatar: user.avatar,
+      address: user.address,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const createAccount = async (req, res) => {
   const { name, age, phone, gender, email, password, role, tokenUser } =
     req.body;
@@ -41,7 +66,36 @@ const handleLogin = async (req, res) => {
   return res.status(200).json(data);
 };
 
-const getUser = async (req, res) => {};
+const editUser = async (req, res) => {
+  const userId = req.user.id;
+  const { name, email, age, phone } = req.body;
+
+  console.log("Received data:", { name, email, age, phone }); // Kiểm tra dữ liệu nhận được
+
+  try {
+    const user = await Accounts.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.age = age || user.age;
+    user.phone = phone || user.phone;
+
+    const updatedUser = await user.save(); // Lưu thông tin người dùng đã cập nhật
+
+    console.log("Updated User:", updatedUser); // Kiểm tra thông tin đã cập nhật
+
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedUser });
+  } catch (err) {
+    console.error("Error:", err); // Kiểm tra lỗi
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 const userForgetPassword = async (req, res) => {
   if (!req.body.email) {
@@ -172,10 +226,8 @@ const uploadMultipleImage = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   const { name, email, phone, address, avatar } = req.body;
 
-  // Kiểm tra nếu avatar không được gửi, bỏ qua avatar trong quá trình cập nhật
   const updateData = { name, email, phone, address };
 
-  // Chỉ cập nhật avatar nếu có giá trị
   if (avatar) {
     updateData.avatar = avatar;
   }
@@ -191,9 +243,10 @@ const updateUserProfile = async (req, res) => {
 };
 
 module.exports = {
+  getUser,
   createAccount,
   handleLogin,
-  getUser,
+  editUser,
   userForgetPassword,
   verifyOTP,
   resetPassword,
