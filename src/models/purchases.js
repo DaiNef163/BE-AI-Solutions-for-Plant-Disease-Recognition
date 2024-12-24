@@ -9,6 +9,7 @@ const Purchases = new Schema(
       {
         productId: { type: mongoose.Schema.Types.ObjectId, ref: "Products" },
         quantity: Number,
+        price: { type: Number, required: true },
       },
     ],
     totalCost: Number,
@@ -16,6 +17,9 @@ const Purchases = new Schema(
       name: String,
       phone: String,
       address: String,
+    },
+    paymentType:{
+      type: String
     },
     buyDate: {
       type: Date,

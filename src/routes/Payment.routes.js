@@ -7,4 +7,6 @@ router.post("/cash", auth.requireAuth, Payment.createPay);
 
 router.post("/online", auth.requireAuth, Payment.createOnlinePayment);
 
+router.post("/callBack", Payment.callBack)
+
 module.exports = router;
