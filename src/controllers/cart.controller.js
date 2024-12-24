@@ -73,7 +73,7 @@ exports.getCart = async (req, res) => {
       return res.status(404).json({ message: "Giỏ hàng không tìm thấy" });
     }
 
-    console.log(cart); // Debug để kiểm tra dữ liệu sản phẩm
+    console.log(cart);
     return res.status(200).json(cart);
   } catch (error) {
     console.error("Error fetching cart:", error);
