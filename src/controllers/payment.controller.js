@@ -5,6 +5,7 @@ const Product = require("../models/product");
 const axios = require("axios").default;
 const CryptoJS = require("crypto-js");
 const moment = require("moment");
+const { reduceProductQuantity } = require("./product.controller");
 
 module.exports.createPay = async (req, res) => {
   const { userInfo, cart } = req.body;
@@ -99,8 +100,8 @@ module.exports.createOnlinePayment = async (req, res) => {
     //khi thanh toán xong, zalopay server sẽ POST đến url này để thông báo cho server của mình
     //Chú ý: cần dùng ngrok để public url thì Zalopay Server mới call đến được
     callback_url:
-      "https://7498-2001-ee1-db09-5900-61d0-e798-e8ef-d4f4.ngrok-free.app/payment/callBack",
-    description: `Lazada - Payment for the order #${transID}`,
+      "https://7679-42-115-181-76.ngrok-free.app/payment/callBack",
+    description: `Payment for the order #${transID}`,
     bank_code: "",
   };
 
@@ -169,6 +170,10 @@ module.exports.callBack = async function (req, res) {
         "update order's status = success where app_trans_id =",
         dataJson["app_trans_id"]
       );
+      for (const productItem of itemjs) {
+        const { productId, quantity } = productItem;
+        await reduceProductQuantity(productId, quantity); 
+      }
 
       result.return_code = 1;
       result.return_message = "success";

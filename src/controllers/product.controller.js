@@ -10,8 +10,6 @@ const leaf = require("../models/leaf");
 
 const createProduct = async (req, res) => {
   console.log("User role:", req.user?.role);
-
-  // Kiểm tra quyền truy cập
   if (req.user.role !== "admin" && req.user.role !== "staff") {
     return res.status(403).json({
       code: 403,
@@ -20,17 +18,17 @@ const createProduct = async (req, res) => {
   }
 
   try {
-    // Lấy dữ liệu từ request body
     const {
       productName,
       price,
+      quantity,
       description,
       discount,
       accept,
       slug,
       nameLeaf,
     } = req.body;
-    const tokenUser = req.user._id; // Lấy `ObjectId` từ người dùng đã xác thực
+    const tokenUser = req.user._id; 
     let imageURL = [];
 
     console.log("Files received:", req.files);
@@ -73,6 +71,7 @@ const createProduct = async (req, res) => {
       productName,
       price,
       description,
+      quantity,
       discount,
       images: imageURL,
       accept,
@@ -230,6 +229,26 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const reduceProductQuantity = async (productId, quantityToReduce) => {
+  try {
+    const product = await Products.findById(productId);
+    if (!product) {
+      throw new Error("Sản phẩm không tồn tại.");
+    }
+
+    if (product.quantity < quantityToReduce) {
+      throw new Error("Số lượng sản phẩm không đủ.");
+    }
+
+    product.quantity -= quantityToReduce; // Trừ số lượng
+    await product.save();
+    console.log(`Đã cập nhật số lượng sản phẩm: ${product.productName}`);
+  } catch (error) {
+    console.error("Lỗi khi trừ số lượng sản phẩm:", error.message);
+    throw error;
+  }
+};
+
 module.exports = {
   createProduct,
   viewProduct,
@@ -239,4 +258,7 @@ module.exports = {
   getProduct,
   deleteProduct,
   viewProductUser,
+  reduceProductQuantity,
 };
+
+
