@@ -28,7 +28,7 @@ const createProduct = async (req, res) => {
       slug,
       nameLeaf,
     } = req.body;
-    const tokenUser = req.user._id; 
+    const tokenUser = req.user._id;
     let imageURL = [];
 
     console.log("Files received:", req.files);
@@ -98,12 +98,17 @@ const createProduct = async (req, res) => {
 const viewProductUser = async (req, res) => {
   try {
     const tokenUser = req.user?.tokenUser; // Lấy tokenUser từ người dùng đã xác thực
+    const userRole = req.user?.role; // Lấy role của người dùng
+
     if (!tokenUser) {
       return res.status(400).json({ message: "tokenUser is required" });
     }
-
-    // Truy vấn các sản phẩm của người dùng hiện tại
-    const products = await Products.find({ tokenUser: tokenUser });
+    let products;
+    if (userRole === "admin") {
+      products = await Products.find({});
+    } else {
+      products = await Products.find({ tokenUser: tokenUser });
+    }
 
     res.json(products);
   } catch (error) {
@@ -260,5 +265,3 @@ module.exports = {
   viewProductUser,
   reduceProductQuantity,
 };
-
-
