@@ -22,8 +22,7 @@ router.get("/maganeview", auth.requireAuth, viewProductUser);
 router.get("/detail/:id", detailProduct);
 router.post("/create", auth.requireAuth, createProduct);
 router.get("/editproduct/:id", auth.requireAuth, getProduct);
-router.post("/editproduct", auth.requireAuth, editProduct);
-router.get("/deleteproduct/:id", auth.requireAuth, getProduct);
+router.put("/editproduct/:id", auth.requireAuth, editProduct);
 router.delete("/deleteproduct/:id", auth.requireAuth, deleteProduct);
 
 // router.get("/admin",auth.requireAuth,productController.productAdmin)

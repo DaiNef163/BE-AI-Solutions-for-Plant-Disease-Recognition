@@ -6,7 +6,6 @@ const {
   getUserService,
 } = require("../services/userService.service");
 const nodeMailer = require("nodemailer");
-const { text } = require("express");
 const forgotPassword = require("../models/forgot-password");
 const bcrypt = require("bcrypt");
 const {
@@ -14,6 +13,14 @@ const {
   uploadMultipleFile,
 } = require("../services/fileServiceUpload.service");
 
+const viewALlUSer = async (req, res) => {
+  try {
+    const user = await Accounts.find({});
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
 const getUser = async (req, res) => {
   const userId = req.user.id;
 
@@ -241,6 +248,20 @@ const updateUserProfile = async (req, res) => {
     res.status(400).json({ error: "Failed to update profile" });
   }
 };
+const deleteUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await Accounts.findByIdAndDelete(userId);
+    console.log(user);
+
+    if (!user) {
+      return res.status(404).send({ message: "Người dùng không tồn tại!" });
+    }
+    res.status(200).send({ message: "Người dùng đã được xóa thành công!" });
+  } catch (error) {
+    res.status(500).send({ message: "Có lỗi xảy ra khi xóa người dùng!" });
+  }
+};
 
 module.exports = {
   getUser,
@@ -253,4 +274,6 @@ module.exports = {
   uploadSingleImage,
   uploadMultipleImage,
   updateUserProfile,
+  viewALlUSer,
+  deleteUser,
 };

@@ -1,10 +1,10 @@
 const Treatment = require("../models/treatment");
 const viewDisease = async (req, res) => {
   try {
-    const disease = await Treatment.find();
-    res.json(disease);
+    const treatments = await Treatment.find();
+    res.status(200).json(treatments);
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ message: 'Có lỗi xảy ra khi lấy danh sách treatment' });
   }
 };
 

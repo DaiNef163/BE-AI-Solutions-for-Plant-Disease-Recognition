@@ -159,33 +159,40 @@ const detailProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const productId = req.params.id;
-
   const { productName, price, description, discount, nameLeaf } = req.body;
-  const images = req.file?.path;
-  console.log("check productId", productId);
+
+  let images = [];
 
   try {
+    // Kiểm tra nếu có tệp, nếu có thì tải lên
+    if (req.files) {
+      console.log("Files received:", req.files);
+
+      if (Array.isArray(req.files.images)) {
+        // Nếu là mảng (nhiều tệp)
+        images = await uploadMultipleFile(req.files.images);
+      } else {
+        // Nếu chỉ có một tệp
+        const uploadedImage = await uploadSingleFile(req.files.images);
+        images.push(uploadedImage[0]);
+      }
+    }
+
+    // Tạo đối tượng updateData với các giá trị cần cập nhật
     const updateData = {
       productName,
       price,
       description,
       discount,
       nameLeaf,
-      images,
+      images: images.length > 0 ? images.map((img) => img.path) : undefined, // Cập nhật ảnh nếu có
     };
 
-    if (images) updateData.images = images;
-
-    // Sửa lại để thêm điều kiện tìm kiếm sản phẩm theo productId
-    const result = await Products.updateOne(
-      { _id: productId },
-      { $set: updateData }
-    );
+    // Sử dụng productId làm điều kiện để cập nhật đúng sản phẩm
+    const result = await Products.updateOne({ _id: productId }, { $set: updateData });
 
     if (result.nModified === 0) {
-      return res
-        .status(404)
-        .json({ message: "Không tìm thấy sản phẩm để cập nhật." });
+      return res.status(400).json({ message: "Không có thay đổi nào." }); // Nếu không có thay đổi
     }
 
     res.status(200).json({ message: "Sản phẩm đã được cập nhật." });
@@ -194,6 +201,9 @@ const editProduct = async (req, res) => {
     res.status(500).json({ message: "Cập nhật sản phẩm thất bại.", error });
   }
 };
+
+
+
 
 const getProduct = async (req, res) => {
   const productId = req.params.id;
@@ -214,23 +224,27 @@ const getProduct = async (req, res) => {
 };
 
 const deleteProduct = async (req, res) => {
-  const productId = req.params.id; // Get productId from URL parameter
-  if (!productId) {
-    return res.status(400).json({ error: "Product ID is required" });
-  }
-
+  const productId = req.params.id;
   try {
-    const result = await Products.deleteOne({ _id: productId });
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: "Product not found" });
+    // Kiểm tra quyền của người dùng
+    const allowedRoles = ["admin", "staff", "customer"];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Không có quyền xóa sản phẩm!" });
     }
 
-    res
+    // Tìm và xóa sản phẩm
+    const product = await Products.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại." });
+    }
+
+    await Products.findByIdAndDelete(productId);
+    return res
       .status(200)
-      .json({ message: "Product deleted successfully", productId });
+      .json({ message: "Sản phẩm đã được xóa thành công!" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error deleting product:", error);
+    return res.status(500).json({ message: "Có lỗi xảy ra khi xóa sản phẩm." });
   }
 };
 

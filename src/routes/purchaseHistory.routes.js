@@ -3,6 +3,6 @@ const router = express.Router();
 const Purchase = require("../controllers/purchase.controller");
 const auth = require("../middleware/authAdmin")
 
-router.get("/",auth.requireAuth,Purchase.getAll);
+router.get("/view",auth.requireAuth,Purchase.getAll);
 router.get("/detail/:id",auth.requireAuth,Purchase.getDetail)
 module.exports = router
