@@ -36,6 +36,9 @@ const Crops = new Schema(
           type: String,
           default: Date.now(),
         },
+        location: {
+          type: String,
+        },
       },
     ],
   },

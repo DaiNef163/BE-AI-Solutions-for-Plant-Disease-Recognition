@@ -22,22 +22,25 @@ module.exports.createCrop = async function (req, res) {
     const illnessHistory = {
       diseaseName: req.body.diseaseName,
       sickDay: req.body.sickDay,
+      location: req.body.location, // Thêm vị trí vào lịch sử bệnh
     };
-    const tokenUser = req.user._id;
     const cropBody = {
       tokenUser: req.user.tokenUser,
       plantName: req.body.plantName,
       quantity: req.body.quantity,
       status: req.body.status,
       plantDate: req.body.plantDate,
-      illnessHistory: illnessHistory,
+      illnessHistory: [illnessHistory], // Lưu dưới dạng mảng
     };
 
     const crop = new Crop(cropBody);
+    console.log(crop);
+
     await crop.save();
 
     res.status(200).json(crop);
   } catch (error) {
+    console.error(error);
     res.status(500).json("Fail !!");
   }
 };
