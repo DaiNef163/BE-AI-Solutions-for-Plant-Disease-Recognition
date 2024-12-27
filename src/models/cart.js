@@ -14,9 +14,13 @@ const ProductItemSchema = new Schema(
 const CartSchema = new Schema(
   {
     quantity: { type: Number, default: 0 },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "Account", unique: true },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+      unique: true,
+    },
     products: { type: [ProductItemSchema], default: [] },
-    totalCost:{type:Number}
+    totalCost: { type: Number },
   },
   { timestamps: true }
 );

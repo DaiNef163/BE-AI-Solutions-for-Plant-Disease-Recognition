@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Cart = require("../models/cart");
 const Products = require("../models/product");
 const Purchases = require("../models/purchases");
@@ -180,5 +181,62 @@ module.exports.clearCart = async (userId) => {
     console.log("Giỏ hàng đã được xóa.");
   } catch (error) {
     console.error("Lỗi khi xóa giỏ hàng:", error);
+  }
+};
+
+module.exports.removeItem = async (req, res) => {
+  const { productId } = req.params;
+  const userId = req.user._id;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "ID sản phẩm không hợp lệ" });
+    }
+
+    const cart = await Cart.findOne({ owner: userId }).populate({
+      path: "products.productId",
+      model: "Products",
+    });
+
+    if (!cart) {
+      return res.status(404).json({ message: "Giỏ hàng không tồn tại" });
+    }
+
+    const productExists = cart.products.some(
+      (item) => item.productId && item.productId._id.toString() === productId
+    );
+
+    if (!productExists) {
+      return res
+        .status(404)
+        .json({ message: "Sản phẩm không tồn tại trong giỏ hàng" });
+    }
+
+    // Loại bỏ sản phẩm khỏi giỏ hàng
+    cart.products = cart.products.filter(
+      (item) => item.productId._id.toString() !== productId
+    );
+
+    // Tính lại tổng chi phí
+    cart.totalCost = cart.products.reduce((total, item) => {
+      // Kiểm tra nếu item có đầy đủ thông tin
+      if (item.productId && item.quantity) {
+        return total + item.quantity * item.productId.price;
+      }
+      return total;
+    }, 0);
+
+    await cart.save();
+
+    res.status(200).json({
+      message: "Sản phẩm đã được xóa khỏi giỏ hàng",
+      cart: {
+        products: cart.products,
+        totalCost: cart.totalCost,
+      },
+    });
+  } catch (error) {
+    console.error("Error in removeItem:", error);
+    res.status(500).json({ message: "Lỗi hệ thống", error: error.message });
   }
 };

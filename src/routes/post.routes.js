@@ -7,9 +7,11 @@ const auth = require("../middleware/authAdmin");
 const {
   viewPostNews,
   createPostNews,
+  viewPostNewsUser,
 } = require("../controllers/post.controller");
 
-router.get("/viewpost", viewPostNews);
+router.get("/viewpost", auth.requireAuth,viewPostNews);
+router.get("/viewpost", auth.requireAuth,viewPostNewsUser);
 router.post("/createPostNews", auth.requireAuth, createPostNews);
 // router.post("/create",auth.requireAuth,upload.array('images'),postController.Create)
 // router.patch("/update/:id",auth.requireAuth,upload.array('images'),postController.Update)

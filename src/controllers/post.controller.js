@@ -29,13 +29,12 @@ const createPostNews = async (req, res) => {
       message: "Bạn không có quyền này",
     });
   }
-  const { user, title, description } = req.body;
 
+  const { title, description } = req.body;
   let imageURL = [];
 
   console.log("Files received:", req.files);
 
-  // Kiểm tra file tải lên
   if (!req.files?.images) {
     return res.status(400).json({ message: "Không có tệp nào được tải lên" });
   }
@@ -44,7 +43,6 @@ const createPostNews = async (req, res) => {
     ? req.files.images
     : [req.files.images];
 
-  // Gọi hàm uploadMultipleFile
   const resultsArr = await uploadMultipleFile(images);
 
   if (Array.isArray(resultsArr)) {
@@ -59,21 +57,26 @@ const createPostNews = async (req, res) => {
     console.error("Error: resultsArr is not an array", resultsArr);
     return res.status(500).json({ message: "Lỗi trong quá trình tải ảnh" });
   }
-  try {
-    let result = await postNews.create({
-      user: req.user._id,
-      title,
-      description,
-      images: imageURL,
-      tokenUser: req.user.tokenUser,
 
-    });
+  // Tạo dữ liệu bài viết
+  const postData = {
+    user: req.user._id,  // ID của người đăng bài
+    title,
+    description,
+    images: imageURL,
+    tokenUser: req.user.tokenUser,
+    author: req.user.name || "Tên tác giả không có",  // Tên tác giả từ req.user.name
+  };
+
+  try {
+    let result = await postNews.create(postData);
     res.json(result);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Tao bai viet that bai" });
+    res.status(500).json({ message: "Tạo bài viết thất bại" });
   }
 };
+
 const editPost = async (req, res) => {
   const postId = req.params.id;
   const { title, description } = req.body;
