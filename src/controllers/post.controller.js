@@ -1,5 +1,8 @@
 const postNews = require("../models/postNews");
-const { uploadSingleFile, uploadMultipleFile } = require("../services/fileServiceUpload.service");
+const {
+  uploadSingleFile,
+  uploadMultipleFile,
+} = require("../services/fileServiceUpload.service");
 
 const viewPostNews = async (req, res) => {
   try {
@@ -11,8 +14,15 @@ const viewPostNews = async (req, res) => {
 };
 const viewPostNewsUser = async (req, res) => {
   try {
-    const tokenUser = req.user.tokenUser;
-    const post = await postNews.find({ tokenUser: tokenUser });
+    const tokenUser = req.user?.tokenUser;
+    const userRole = req.user?.role;
+    let post;
+    if (userRole === "admin") {
+      post = await postNews.find({});
+    } else {
+      post = await postNews.find({ tokenUser: tokenUser });
+    }
+    // const post = await postNews.find({ tokenUser: tokenUser });
     res.json(post);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -60,12 +70,12 @@ const createPostNews = async (req, res) => {
 
   // Tạo dữ liệu bài viết
   const postData = {
-    user: req.user._id,  // ID của người đăng bài
+    user: req.user._id, // ID của người đăng bài
     title,
     description,
     images: imageURL,
     tokenUser: req.user.tokenUser,
-    author: req.user.name || "Tên tác giả không có",  // Tên tác giả từ req.user.name
+    author: req.user.name || "Tên tác giả không có", // Tên tác giả từ req.user.name
   };
 
   try {
@@ -133,7 +143,15 @@ const getPost = async (req, res) => {
     console.log(error);
 
     // Trả về lỗi khi có sự cố
-    res.status(500).json({ message: "Lấy thông tin bài viết thất bại.", error });
+    res
+      .status(500)
+      .json({ message: "Lấy thông tin bài viết thất bại.", error });
   }
 };
-module.exports = { viewPostNews, createPostNews, viewPostNewsUser,editPost,getPost };
+module.exports = {
+  viewPostNews,
+  createPostNews,
+  viewPostNewsUser,
+  editPost,
+  getPost,
+};

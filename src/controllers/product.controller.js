@@ -97,8 +97,8 @@ const createProduct = async (req, res) => {
 
 const viewProductUser = async (req, res) => {
   try {
-    const tokenUser = req.user?.tokenUser; // Lấy tokenUser từ người dùng đã xác thực
-    const userRole = req.user?.role; // Lấy role của người dùng
+    const tokenUser = req.user?.tokenUser;
+    const userRole = req.user?.role;
 
     if (!tokenUser) {
       return res.status(400).json({ message: "tokenUser is required" });
@@ -189,7 +189,10 @@ const editProduct = async (req, res) => {
     };
 
     // Sử dụng productId làm điều kiện để cập nhật đúng sản phẩm
-    const result = await Products.updateOne({ _id: productId }, { $set: updateData });
+    const result = await Products.updateOne(
+      { _id: productId },
+      { $set: updateData }
+    );
 
     if (result.nModified === 0) {
       return res.status(400).json({ message: "Không có thay đổi nào." }); // Nếu không có thay đổi
@@ -201,9 +204,6 @@ const editProduct = async (req, res) => {
     res.status(500).json({ message: "Cập nhật sản phẩm thất bại.", error });
   }
 };
-
-
-
 
 const getProduct = async (req, res) => {
   const productId = req.params.id;
