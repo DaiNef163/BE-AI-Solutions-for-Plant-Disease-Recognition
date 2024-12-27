@@ -10,8 +10,8 @@ const {
   viewPostNewsUser,
 } = require("../controllers/post.controller");
 
-router.get("/viewpost", auth.requireAuth,viewPostNews);
-router.get("/viewpost", auth.requireAuth,viewPostNewsUser);
+router.get("/view", viewPostNews);
+router.get("/viewpost", auth.requireAuth, viewPostNewsUser);
 router.post("/createPostNews", auth.requireAuth, createPostNews);
 // router.post("/create",auth.requireAuth,upload.array('images'),postController.Create)
 // router.patch("/update/:id",auth.requireAuth,upload.array('images'),postController.Update)

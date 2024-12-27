@@ -1,11 +1,9 @@
 const Crop = require("../models/crop");
-const moment = require("moment-timezone");
+const mongoose = require("mongoose");
 
 module.exports.getAll = async function (req, res) {
   try {
     const tokenUser = req.user?.tokenUser;
-    console.log(tokenUser);
-
     if (!tokenUser) {
       return res.status(400).json({ message: "tokenUser is required" });
     }
@@ -22,7 +20,7 @@ module.exports.createCrop = async function (req, res) {
     const illnessHistory = {
       diseaseName: req.body.diseaseName,
       sickDay: req.body.sickDay,
-      location: req.body.location, // Thêm vị trí vào lịch sử bệnh
+      location: req.body.location,
     };
     const cropBody = {
       tokenUser: req.user.tokenUser,
@@ -34,7 +32,7 @@ module.exports.createCrop = async function (req, res) {
     };
 
     const crop = new Crop(cropBody);
-    console.log(crop);
+    console.log(cropBody);
 
     await crop.save();
 
@@ -47,15 +45,25 @@ module.exports.createCrop = async function (req, res) {
 
 module.exports.detailCrop = async function (req, res) {
   try {
+    // Lấy cropId từ params (được truyền từ frontend)
+    const { cropId } = req.params;
+    console.log(cropId); // Kiểm tra cropId
+
+    // Kiểm tra xem cropId có phải ObjectId hợp lệ không
+    if (!mongoose.Types.ObjectId.isValid(cropId)) {
+      return res.status(400).json({ message: "ID cây trồng không hợp lệ!" });
+    }
+
+    // Tìm cây trồng theo cropId
     const detailCrop = await Crop.findOne({
-      tokenUser: req.user.tokenUser,
+      _id: cropId,
     });
 
     if (!detailCrop) {
       return res.status(404).json({ message: "Không tìm thấy cây trồng!" });
     }
 
-    res.status(200).json(detailCrop);
+    res.status(200).json(detailCrop); // Trả về chi tiết cây trồng
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết cây trồng:", error);
     res.status(500).json({ message: "Lỗi hệ thống!" });
@@ -66,7 +74,7 @@ module.exports.detailCrop = async function (req, res) {
 
 module.exports.updateSick = async function (req, res) {
   const { cropId } = req.params;
-  const { illnessHistory, status } = req.body; // Thêm status vào trong body
+  const { illnessHistory, status } = req.body;
 
   try {
     // Tìm cây trồng theo cropId
@@ -76,18 +84,15 @@ module.exports.updateSick = async function (req, res) {
       return res.status(404).json({ message: "Crop not found" });
     }
 
-    // Thêm lịch sử bệnh vào cây trồng
     if (illnessHistory && illnessHistory.length > 0) {
-      crop.illnessHistory.push(...illnessHistory); // Thêm các bệnh mới vào lịch sử
+      crop.illnessHistory.push(...illnessHistory);
     }
 
-    // Kiểm tra status hợp lệ và cập nhật nếu có
     const validStatuses = ["healthy", "sick", "recovered"];
     if (status && validStatuses.includes(status)) {
       crop.status = status; // Cập nhật status cho cây trồng
     }
 
-    // Lưu lại cây trồng với lịch sử bệnh và status mới
     await crop.save();
 
     res

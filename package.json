@@ -2,21 +2,26 @@
   "name": "backend-nodejs",
   "version": "1.0.0",
   "description": "Backend nodejs",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/server.js",
-    "start": "nodemon ./src/server.js"
-  },
   "keywords": [
     "nodejs",
     "react"
   ],
-  "author": {
-    "name": "HoaiNam",
-    "url": "https://www.facebook.com/nam160303"
+  "homepage": "https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-Disease-Recognition#readme",
+  "bugs": {
+    "url": "https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-Disease-Recognition/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-Disease-Recognition.git"
   },
   "license": "ISC",
+  "author": "HoaiNam (https://www.facebook.com/nam160303)",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/server.js"
+  },
   "dependencies": {
     "@faker-js/faker": "^9.1.0",
     "axios": "^1.7.7",

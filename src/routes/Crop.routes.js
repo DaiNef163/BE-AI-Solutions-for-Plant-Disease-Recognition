@@ -5,7 +5,7 @@ const auth = require("../middleware/authAdmin");
 
 router.get("/", auth.requireAuth, CropController.getAll);
 router.post("/create", auth.requireAuth, CropController.createCrop);
-router.get("/detail/:id", auth.requireAuth, CropController.detailCrop);
+router.get("/detail/:cropId", auth.requireAuth, CropController.detailCrop);
 router.patch("/update/:cropId", auth.requireAuth, CropController.updateSick);
 router.patch("/edit/:id", auth.requireAuth, CropController.editCrop);
 router.delete("/delete/:id", auth.requireAuth, CropController.deleteCrop);

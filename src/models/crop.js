@@ -38,6 +38,7 @@ const Crops = new Schema(
         },
         location: {
           type: String,
+          default: "",
         },
       },
     ],
