@@ -24,12 +24,12 @@ routerUser.get("/", (req, res) => {
 
 routerUser.post("/register", createAccount);
 routerUser.post("/login", handleLogin);
-routerUser.get("/viewuserall",viewALlUSer)
+routerUser.get("/viewuserall", viewALlUSer);
 routerUser.put("/user/update", auth.requireAuth, editUser);
 routerUser.get("/user/profile", auth.requireAuth, getUser);
 routerUser.put("/update", auth.requireAuth, updateUserProfile);
 routerUser.post("/userForgetPassword", userForgetPassword);
 routerUser.post("/verifyotp", verifyOTP);
 routerUser.post("/resetPassword", resetPassword);
-routerUser.delete("/deleteuser/:userId", deleteUser); 
+routerUser.delete("/deleteuser/:userId", deleteUser);
 module.exports = routerUser;

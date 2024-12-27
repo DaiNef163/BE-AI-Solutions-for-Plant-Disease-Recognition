@@ -1,4 +1,5 @@
 const postNews = require("../models/postNews");
+const { post } = require("../routes/post.routes");
 const {
   uploadSingleFile,
   uploadMultipleFile,
@@ -148,10 +149,28 @@ const getPost = async (req, res) => {
       .json({ message: "Lấy thông tin bài viết thất bại.", error });
   }
 };
+const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    // Tìm và xóa bài viết theo id
+    const post = await postNews.findByIdAndDelete(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
+    }
+
+    res.status(200).json({ message: "Bài viết đã được xóa thành công" });
+  } catch (error) {
+    console.error("Lỗi khi xóa bài viết:", error);
+    res.status(500).json({ message: "Đã xảy ra lỗi khi xóa bài viết" });
+  }
+};
 module.exports = {
   viewPostNews,
   createPostNews,
   viewPostNewsUser,
   editPost,
   getPost,
+  deletePost,
 };

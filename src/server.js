@@ -11,7 +11,7 @@ const routerUser = require("./routes/Account.routes");
 const cloudinary = require("cloudinary").v2;
 
 const app = express();
-const port = process.env.PORT || 8888;
+const port = process.env.PORT || 3000;
 
 //app.use(cors());
 app.use(
