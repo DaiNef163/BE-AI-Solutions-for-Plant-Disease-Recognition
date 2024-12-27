@@ -1,5 +1,4 @@
 const postNews = require("../models/postNews");
-const { post } = require("../routes/post.routes");
 const {
   uploadSingleFile,
   uploadMultipleFile,
