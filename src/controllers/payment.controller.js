@@ -67,71 +67,82 @@ module.exports.createPay = async (req, res) => {
 };
 
 module.exports.createOnlinePayment = async (req, res) => {
-  const { userInfo, cart } = req.body;
-  const totalCost = cart.totalCost;
-
-  const productsWithPrice = await Promise.all(
-    cart.products.map(async (item) => {
-      const product = await Product.findById(item.productId);
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-        price: product.price,
-      };
-    })
-  );
-
-  const embed_data = {
-    //sau khi hoàn tất thanh toán sẽ đi vào link này (thường là link web thanh toán thành công của mình)
-    redirecturl: "http://localhost:5173/product",
-    additionalInfo: userInfo,
-  };
-
-  const transID = Math.floor(Math.random() * 1000000);
-
-  const order = {
-    app_id: process.env.APP_ID,
-    app_trans_id: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
-    app_user: req.user.id,
-    app_time: Date.now(), // miliseconds
-    item: JSON.stringify(productsWithPrice),
-    embed_data: JSON.stringify(embed_data),
-    amount: totalCost,
-    //khi thanh toán xong, zalopay server sẽ POST đến url này để thông báo cho server của mình
-    //Chú ý: cần dùng ngrok để public url thì Zalopay Server mới call đến được
-    callback_url:
-      "https://7679-42-115-181-76.ngrok-free.app/payment/callBack",
-    description: `Payment for the order #${transID}`,
-    bank_code: "",
-  };
-
-  // appid|app_trans_id|appuser|amount|apptime|embeddata|item
-  const data =
-    process.env.APP_ID +
-    "|" +
-    order.app_trans_id +
-    "|" +
-    order.app_user +
-    "|" +
-    order.amount +
-    "|" +
-    order.app_time +
-    "|" +
-    order.embed_data +
-    "|" +
-    order.item;
-  order.mac = CryptoJS.HmacSHA256(data, process.env.KEY1).toString();
-
   try {
+    const { userInfo, cart } = req.body;
+    const totalCost = cart.totalCost;
+
+    // Step 1: Kiểm tra xem tất cả sản phẩm có đủ số lượng hay không
+    const productsWithPrice = await Promise.all(
+      cart.products.map(async (item) => {
+        const product = await Product.findById(item.productId);
+        
+        // Kiểm tra số lượng sản phẩm
+        if (product.quantity < item.quantity) {
+          return { success: false, message: `Không đủ số lượng sản phẩm: ${product.productName}. Số lượng còn lại: ${product.quantity}` };
+        }
+
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          price: product.price,
+        };
+      })
+    );
+
+    // Kiểm tra nếu có lỗi trong việc kiểm tra số lượng
+    const error = productsWithPrice.find(item => item.success === false);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    // Step 2: Tiếp tục với việc tạo đơn hàng nếu tất cả sản phẩm đủ số lượng
+    const embed_data = {
+      redirecturl: "http://localhost:5173/product",
+      additionalInfo: userInfo,
+    };
+
+    const transID = Math.floor(Math.random() * 1000000);
+
+    const order = {
+      app_id: process.env.APP_ID,
+      app_trans_id: `${moment().format("YYMMDD")}_${transID}`,
+      app_user: req.user.id,
+      app_time: Date.now(),
+      item: JSON.stringify(productsWithPrice),
+      embed_data: JSON.stringify(embed_data),
+      amount: totalCost,
+      callback_url: "https://c7b5-2001-ee0-4b6f-c8a0-50b3-eb6d-72e0-acff.ngrok-free.app/payment/callBack",
+      description: `Payment for the order #${transID}`,
+      bank_code: "",
+    };
+
+    const data = process.env.APP_ID + "|" +
+                 order.app_trans_id + "|" +
+                 order.app_user + "|" +
+                 order.amount + "|" +
+                 order.app_time + "|" +
+                 order.embed_data + "|" +
+                 order.item;
+    order.mac = CryptoJS.HmacSHA256(data, process.env.KEY1).toString();
+
     const result = await axios.post(process.env.ENDPOINT, null, {
       params: order,
     });
+
     console.log(result.data);
     return res.status(200).json(result.data.order_url);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(400).json({ success: false, message: 'Có lỗi xảy ra trong quá trình thanh toán.' });
   }
 };
+
+
+
+
 
 module.exports.callBack = async function (req, res) {
   let result = {};
@@ -172,7 +183,7 @@ module.exports.callBack = async function (req, res) {
       );
       for (const productItem of itemjs) {
         const { productId, quantity } = productItem;
-        await reduceProductQuantity(productId, quantity); 
+        await reduceProductQuantity(productId, quantity);
       }
 
       result.return_code = 1;
