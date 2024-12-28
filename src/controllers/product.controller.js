@@ -159,7 +159,8 @@ const detailProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const productId = req.params.id;
-  const { productName, price, description, discount, nameLeaf } = req.body;
+  const { productName, price, description, discount, nameLeaf, quantity } =
+    req.body;
 
   let images = [];
 
@@ -185,6 +186,7 @@ const editProduct = async (req, res) => {
       description,
       discount,
       nameLeaf,
+      quantity,
       images: images.length > 0 ? images.map((img) => img.path) : undefined, // Cập nhật ảnh nếu có
     };
 
