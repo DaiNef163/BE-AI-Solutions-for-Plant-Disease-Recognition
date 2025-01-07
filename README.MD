@@ -1,84 +1,56 @@
-# 🌱 Backend for AI Plant Disease Recognition Website
-
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+# Backend for AI Plant Disease Recognition Website
 
 ---
 
-## 📝 Description
-This project is the **backend system** for an AI-powered e-commerce website designed for the agricultural sector. The backend provides robust functionalities, including:
-- **User authentication and authorization**.
-- **CRUD operations** for articles, products, and plant diseases.
-- **Payment integration** with ZaloPay.
-- **Product buying and selling features**, along with purchase and disease history tracking.
-
-### **GitHub Repository**
-🔗 [Backend Repository](https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-DiseaseRecognition)
+## 📌 Project Overview
+This project is the backend server for an **AI-powered e-commerce website** tailored for agriculture. It provides features such as:
+- User authentication and authorization.
+- CRUD operations for articles, products, and plant diseases.
+- Product purchasing and online payment integration with **ZaloPay**.
+- History tracking for purchases and plant disease diagnoses.
 
 ---
-
 ## 🔧 Technologies Used
-- **Node.js** (Express.js): For building a scalable RESTful API.
-- **MongoDB**: NoSQL database for storing user, product, and transaction data.
-- **JavaScript**: Backend logic implementation.
-
+- ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+- ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+- ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white) for image storage
+- ![ngrok](https://img.shields.io/badge/ngrok-1F1E37?style=for-the-badge&logo=ngrok&logoColor=white) for public URL exposure during development
 ---
 
-## 📂 Database
-The backend uses **MongoDB** for managing the following:
-- **User Data**: Login, registration, roles, and authorization.
-- **Products**: Product details for buying and selling.
-- **Plant Diseases**: Historical data for diagnosis tracking.
-- **News Articles**: CRUD operations for agricultural updates.
-- **Payment History**: Integrated with **ZaloPay** for seamless transactions.
-
----
-
-## 🛠 Responsibilities
-### Key Contributions:
-- **Database Design**:
-  - Created a well-structured schema to ensure efficient data flow.
-- **Authentication**:
-  - Implemented **JWT-based authentication** and role-based authorization.
-- **Feature Implementation**:
-  - Developed:
-    - **Login/Registration** functionalities.
-    - **CRUD operations** for articles, products, and plant diseases.
-    - **Payment integration** with ZaloPay.
-    - **Purchase and disease history** tracking.
-
----
-
-## 🔑 Key Features
-- **User Authorization**: Role-based access control for different user roles (admin, staff, customer).
-- **CRUD Functionalities**: Complete backend support for creating, updating, and managing data.
-- **ZaloPay Integration**: Secure and reliable payment handling for transactions.
-- **Historical Tracking**: Maintains records for product purchases and plant disease diagnoses.
-
----
-
-## 📦 How to Run
+## 💻 How to Run
 
 Follow these steps to set up and run the backend server:
 
-1. **Clone the Repository and Navigate**:
-   ```bash
-   git clone https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-DiseaseRecognition.git
-   cd BE-AI-Solutions-for-Plant-DiseaseRecognition
-2. Install Dependencies: npm install
+### 1️⃣ Clone the Repository and Navigate
+```bash
+git clone https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-DiseaseRecognition.git
+cd BE-AI-Solutions-for-Plant-DiseaseRecognition
+```
 
-3. Set Up Environment Variables: Create a .env file in the root directory and add the following configurations:
-  PORT=5000
-  MONGO_URI=<Your MongoDB Connection String>
-  JWT_SECRET=<Your JWT Secret Key>
-  ZALOPAY_KEY=<Your ZaloPay API Key>
-  CLOUDINARY_NAME=<Your Cloudinary Cloud Name>
-  CLOUDINARY_API_KEY=<Your Cloudinary API Key>
-  CLOUDINARY_API_SECRET=<Your Cloudinary API Secret>
+### 2️⃣ Install Dependencies
+```bash
+npm install
+```
 
-4. Configure Cloudinary: Update your cloudinary.js or related configuration file with:
-https://cloudinary.com/home
+### 3️⃣ Set Up Environment Variables
+Create a `.env` file in the root directory and add the following configurations:
+```plaintext
+PORT=5000
+MONGO_URI=<Your MongoDB Atlas Connection String>
+JWT_SECRET=<Your JWT Secret Key>
+ZALOPAY_KEY=<Your ZaloPay API Key>
+CLOUDINARY_NAME=<Your Cloudinary Cloud Name>
+CLOUDINARY_API_KEY=<Your Cloudinary API Key>
+CLOUDINARY_API_SECRET=<Your Cloudinary API Secret>
+NGROK_AUTH_TOKEN=<Your ngrok Auth Token> # Optional for exposing localhost
+```
+> 🌟 **MongoDB Atlas**: Use the connection string provided by MongoDB Atlas, replacing `<username>`, `<password>`, and `<cluster>` as required.
+
+### 4️⃣ Configure Cloudinary
+Update your `cloudinary.js` (or equivalent file) with the following code:
+```javascript
+const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -86,8 +58,54 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-5. Run the Development Server: npm start
+module.exports = cloudinary;
+```
+For more details, visit [Cloudinary Documentation](https://cloudinary.com/documentation).
+
+### 5️⃣ Run the Development Server
+Start the server using:
+```bash
+npm start
+```
+The server will be available at:
+- **Localhost**: `http://localhost:8080`
+- **Public URL (via ngrok)**:
+   - Start ngrok:
+     ```bash
+     ngrok http 8080
+     ```
+   - Copy the public URL provided by ngrok (e.g., `https://xyz.ngrok.io`) and use it for external testing.
 
 ---
-**Thank you for visiting! Feel free to contribute or reach out for collaboration opportunities.**
 
+## Example `.env` File
+```plaintext
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/myDatabase?retryWrites=true&w=majority
+JWT_SECRET=mysecretkey
+ZALOPAY_KEY=myzalopayapikey
+CLOUDINARY_NAME=mycloudname
+CLOUDINARY_API_KEY=mycloudinaryapikey
+CLOUDINARY_API_SECRET=mycloudinaryapisecret
+NGROK_AUTH_TOKEN=myngrokauthtoken
+```
+
+---
+
+## 🛠 Responsibilities
+- **Database Design**: Analyzed and designed the database structure.
+- **User Authentication**: Implemented user login, registration, and authorization.
+- **Core Functionalities**:
+  - CRUD operations for articles, products, and plant diseases.
+  - Product purchasing and purchase history tracking.
+  - Integrated ZaloPay for secure online payments.
+- **Collaborative Development**: Worked with a team to ensure seamless integration between frontend and backend.
+
+---
+
+## 🔗 GitHub Repository
+[Backend AI Plant Disease Recognition](https://github.com/DaiNef163/BE-AI-Solutions-for-Plant-DiseaseRecognition)
+
+---
+
+Feel free to reach out for any queries or contributions!
